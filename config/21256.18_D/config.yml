@@ -1,0 +1,12 @@
+# See config.example.yml for documentation.
+object: orig/21256.18_D/xboxkrnld.exe
+pdb: orig/21256.18_D/xboxkrnld.pdb
+symbols: config/21256.18_D/symbols.txt
+splits: config/21256.18_D/splits.txt
+quick_analysis: false
+detect_objects: true
+detect_strings: true
+write_asm: true
+symbols_known: false
+fill_gaps: true
+write_splits_all: true

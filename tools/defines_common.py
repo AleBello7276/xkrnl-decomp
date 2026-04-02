@@ -1,7 +1,7 @@
 # Game versions
 DEFAULT_VERSION = 0
 VERSIONS = [
-    "GAMEID",  # 0
+    "21256.18_D",  # 0
 ]
 
 # Include paths
