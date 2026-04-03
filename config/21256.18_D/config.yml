@@ -8,5 +8,5 @@ detect_objects: true
 detect_strings: true
 write_asm: true
 symbols_known: false
-fill_gaps: true
-write_splits_all: true
+fill_gaps: false
+autosplit_pdb: false

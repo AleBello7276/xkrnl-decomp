@@ -8,9 +8,9 @@ objects.json suitable for use with configure.py.  All units are set to
 new units; existing "COMPLETE" entries are preserved.
 
 Usage:
-    python3 tools/gen_objects.py [--build BUILD_DIR] [--out OBJECTS_JSON]
-                                 [--mw-version VERSION] [--cflags-key KEY]
-                                 [--progress-category CAT]
+    python3 gen_objects.py [-v VERSION] [--build BUILD_DIR] [--out OBJECTS_JSON]
+                           [--mw-version VERSION] [--cflags-key KEY]
+                           [--progress-category CAT]
 """
 
 import argparse
@@ -19,6 +19,8 @@ import re
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+from tools.defines_common import DEFAULT_VERSION, VERSIONS
 
 
 def is_gap_fill(name: str) -> bool:
@@ -34,13 +36,25 @@ def unit_to_src_path(obj_name: str) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--build", default="build", help="Build directory (default: build)")
-    parser.add_argument("--out", default="config/objects.json", help="Output path (default: config/objects.json)")
+    parser.add_argument(
+        "-v", "--version",
+        choices=VERSIONS,
+        type=str.upper,
+        default=VERSIONS[DEFAULT_VERSION],
+        help=f"version to build (default: {VERSIONS[DEFAULT_VERSION]})",
+    )
+    parser.add_argument("--build", default=None, help="Build directory (default: build/<version>)")
+    parser.add_argument("--out", default=None, help="Output path (default: config/<version>/objects.json)")
     parser.add_argument("--mw-version", default="X360/16.00.11886.00", help="Compiler version string")
     parser.add_argument("--cflags-key", default="base", help="cflags key from config.json (default: base)")
     parser.add_argument("--progress-category", default="main", help="Progress category (default: main)")
     parser.add_argument("--include-gaps", action="store_true", help="Also include auto_* gap-fill units")
     args = parser.parse_args()
+
+    if args.build is None:
+        args.build = f"build/{args.version}"
+    if args.out is None:
+        args.out = f"config/{args.version}/objects.json"
 
     build_config = Path(args.build) / "config.json"
     if not build_config.exists():

@@ -1,6 +1,6 @@
 {
     "progress_categories": {
-        "sdk": "XDK Code"
+        "main": "kernel"
     },
     "asflags": [],
     "ldflags": [],

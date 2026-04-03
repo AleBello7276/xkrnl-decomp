@@ -1,1 +1,916 @@
-{}
+{
+    "_misc": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\__Linker__.cpp": "MISSING",
+            "init.c": "NonMatching",
+            "src\\mtpd.cpp": "MISSING",
+            "src\\xvoice.cpp": "MISSING",
+            "src\\spif.cpp": "MISSING",
+            "src\\xmadecoder.cpp": "MISSING",
+            "src\\mic.cpp": "MISSING",
+            "src\\devauthusb.cpp": "MISSING",
+            "src\\drvbind.cpp": "MISSING",
+            "src\\xboxkrnle.cpp": "MISSING"
+        }
+    },
+    "ani_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ani_d\\ani.cpp": "MISSING"
+        }
+    },
+    "detroit": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\detroit\\driver.cpp": "MISSING"
+        }
+    },
+    "deviceauth_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\deviceauth_d\\deviceauth.cpp": "MISSING",
+            "src\\deviceauth_d\\title.cpp": "MISSING"
+        }
+    },
+    "dolbydigital": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\dolbydigital\\ddicetab.cpp": "MISSING",
+            "src\\dolbydigital\\xbitcnt.cpp": "MISSING",
+            "src\\dolbydigital\\window_e.cpp": "MISSING",
+            "src\\dolbydigital\\tr_det.cpp": "MISSING",
+            "src\\dolbydigital\\dsp_misc.cpp": "MISSING",
+            "src\\dolbydigital\\filtpcm.cpp": "MISSING",
+            "src\\dolbydigital\\mantsubs.cpp": "MISSING",
+            "src\\dolbydigital\\gbitsubs.cpp": "MISSING",
+            "src\\dolbydigital\\fft.cpp": "MISSING",
+            "src\\dolbydigital\\dolbysub.cpp": "MISSING",
+            "src\\dolbydigital\\ddice.cpp": "MISSING",
+            "src\\dolbydigital\\crc_e.cpp": "MISSING",
+            "src\\dolbydigital\\auxdat_e.cpp": "MISSING",
+            "src\\dolbydigital\\mcall.cpp": "MISSING",
+            "src\\dolbydigital\\xcall.cpp": "MISSING",
+            "src\\dolbydigital\\format_e.cpp": "MISSING",
+            "src\\dolbydigital\\qntz.cpp": "MISSING",
+            "src\\dolbydigital\\gbita_e.cpp": "MISSING",
+            "src\\dolbydigital\\bsi_e.cpp": "MISSING",
+            "src\\dolbydigital\\gba_calc.cpp": "MISSING",
+            "src\\dolbydigital\\dfpe.cpp": "MISSING",
+            "src\\dolbydigital\\bfpe.cpp": "MISSING",
+            "src\\dolbydigital\\dctsc.cpp": "MISSING",
+            "src\\dolbydigital\\cfft.cpp": "MISSING",
+            "src\\dolbydigital\\filter.cpp": "MISSING",
+            "src\\dolbydigital\\pk_subs.cpp": "MISSING",
+            "src\\dolbydigital\\gba_subs.cpp": "MISSING",
+            "src\\dolbydigital\\exp_subs.cpp": "MISSING",
+            "src\\dolbydigital\\dct_subs.cpp": "MISSING",
+            "src\\dolbydigital\\saveprev.cpp": "MISSING",
+            "src\\dolbydigital\\expstrat.cpp": "MISSING",
+            "src\\dolbydigital\\frmstrat.cpp": "MISSING",
+            "src\\dolbydigital\\dolbytab.cpp": "MISSING",
+            "src\\dolbydigital\\dd.cpp": "MISSING",
+            "src\\dolbydigital\\ddicevar.cpp": "MISSING"
+        }
+    },
+    "dump_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\dump_d\\dump.cpp": "MISSING",
+            "src\\dump_d\\dumpconsole.cpp": "MISSING",
+            "src\\dump_d\\dumpxit.cpp": "MISSING",
+            "src\\dump_d\\dumpfull.cpp": "MISSING",
+            "src\\dump_d\\partition.cpp": "MISSING",
+            "src\\dump_d\\sata_disk.cpp": "MISSING",
+            "src\\dump_d\\dumputil.cpp": "MISSING",
+            "src\\dump_d\\progressbar.cpp": "MISSING",
+            "src\\dump_d\\dumpp.cpp": "MISSING"
+        }
+    },
+    "ex_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ex_d\\etx.cpp": "MISSING",
+            "src\\ex_d\\pool.cpp": "MISSING",
+            "src\\ex_d\\config.cpp": "MISSING",
+            "src\\ex_d\\thread.cpp": "MISSING",
+            "src\\ex_d\\debug.cpp": "MISSING",
+            "src\\ex_d\\event.cpp": "MISSING",
+            "src\\ex_d\\mutant.cpp": "MISSING",
+            "src\\ex_d\\semphore.cpp": "MISSING",
+            "src\\ex_d\\timer.cpp": "MISSING",
+            "src\\ex_d\\update.cpp": "MISSING",
+            "src\\ex_d\\rwlock.cpp": "MISSING",
+            "src\\ex_d\\alarm.cpp": "MISSING",
+            "src\\ex_d\\expansn.cpp": "MISSING",
+            "src\\ex_d\\betafeat.cpp": "MISSING",
+            "src\\ex_d\\titlterm.cpp": "MISSING",
+            "src\\ex_d\\systime.cpp": "MISSING",
+            "src\\ex_d\\intrlock.cpp": "MISSING"
+        }
+    },
+    "fatw": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\fatw\\fatsup.cpp": "MISSING",
+            "src\\fatw\\driver.cpp": "MISSING",
+            "src\\fatw\\fileinfo.cpp": "MISSING",
+            "src\\fatw\\readwrit.cpp": "MISSING",
+            "src\\fatw\\mountvol.cpp": "MISSING",
+            "src\\fatw\\synch.cpp": "MISSING",
+            "src\\fatw\\cleanup.cpp": "MISSING",
+            "src\\fatw\\dirctrl.cpp": "MISSING",
+            "src\\fatw\\volinfo.cpp": "MISSING",
+            "src\\fatw\\close.cpp": "MISSING",
+            "src\\fatw\\create.cpp": "MISSING",
+            "src\\fatw\\fcbsup.cpp": "MISSING"
+        }
+    },
+    "fatx": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\fatx\\mountvol.cpp": "MISSING",
+            "src\\fatx\\fatsup.cpp": "MISSING",
+            "src\\fatx\\driver.cpp": "MISSING",
+            "src\\fatx\\allocsup.cpp": "MISSING",
+            "src\\fatx\\dirctrl.cpp": "MISSING",
+            "src\\fatx\\fileinfo.cpp": "MISSING",
+            "src\\fatx\\synch.cpp": "MISSING",
+            "src\\fatx\\cleanup.cpp": "MISSING",
+            "src\\fatx\\volinfo.cpp": "MISSING",
+            "src\\fatx\\readwrit.cpp": "MISSING",
+            "src\\fatx\\close.cpp": "MISSING",
+            "src\\fatx\\create.cpp": "MISSING",
+            "src\\fatx\\fcbsup.cpp": "MISSING"
+        }
+    },
+    "fscache_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\fscache_d\\fscache.cpp": "MISSING"
+        }
+    },
+    "halx_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\halx_d\\smmodule.cpp": "MISSING",
+            "src\\halx_d\\halinit.cpp": "MISSING",
+            "src\\halx_d\\rtclock.cpp": "MISSING",
+            "src\\halx_d\\argonerr.cpp": "MISSING",
+            "src\\halx_d\\gpio.cpp": "MISSING",
+            "src\\halx_d\\pcispace.cpp": "MISSING",
+            "src\\halx_d\\intrctrl.cpp": "MISSING",
+            "src\\halx_d\\memory.cpp": "MISSING",
+            "src\\halx_d\\oddtray.cpp": "MISSING",
+            "src\\halx_d\\hddvdrom.cpp": "MISSING",
+            "src\\halx_d\\audclamp.cpp": "MISSING",
+            "src\\halx_d\\halt.cpp": "MISSING"
+        }
+    },
+    "hfsp": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\hfsp\\mountvol.cpp": "MISSING",
+            "src\\hfsp\\hfspsup.cpp": "MISSING",
+            "src\\hfsp\\driver.cpp": "MISSING",
+            "src\\hfsp\\cleanup.cpp": "MISSING",
+            "src\\hfsp\\dirctrl.cpp": "MISSING",
+            "src\\hfsp\\volinfo.cpp": "MISSING",
+            "src\\hfsp\\fileinfo.cpp": "MISSING",
+            "src\\hfsp\\read.cpp": "MISSING",
+            "src\\hfsp\\close.cpp": "MISSING",
+            "src\\hfsp\\create.cpp": "MISSING",
+            "src\\hfsp\\synch.cpp": "MISSING",
+            "src\\hfsp\\fcbsup.cpp": "MISSING"
+        }
+    },
+    "hid_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\hid_d\\hidclass.cpp": "MISSING"
+        }
+    },
+    "hvexport_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\hvexport_d\\iptv.cpp": "MISSING",
+            "src\\hvexport_d\\activate.cpp": "MISSING"
+        }
+    },
+    "init": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\init\\crypto.cpp": "MISSING",
+            "init/kdataseg.c": "NonMatching"
+        }
+    },
+    "io_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\io_d\\complete.cpp": "MISSING",
+            "src\\io_d\\objsup.cpp": "MISSING",
+            "src\\io_d\\fsapi.cpp": "MISSING",
+            "src\\io_d\\iosubs.cpp": "MISSING",
+            "src\\io_d\\share.cpp": "MISSING",
+            "src\\io_d\\internal.cpp": "MISSING",
+            "src\\io_d\\fsrtl.cpp": "MISSING"
+        }
+    },
+    "kd_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\kd_d\\kdnet.cpp": "MISSING",
+            "src\\kd_d\\kdinit.cpp": "MISSING",
+            "src\\kd_d\\kdlock.cpp": "MISSING",
+            "src\\kd_d\\kdapi.cpp": "MISSING",
+            "src\\kd_d\\network.cpp": "MISSING",
+            "src\\kd_d\\kdtrap.cpp": "MISSING",
+            "src\\kd_d\\kdbreak.cpp": "MISSING",
+            "src\\kd_d\\kdfile.cpp": "MISSING",
+            "src\\kd_d\\kdsmp.cpp": "MISSING",
+            "src\\kd_d\\kddbgio.cpp": "MISSING",
+            "src\\kd_d\\kdnic.cpp": "MISSING",
+            "src\\kd_d\\kdbytesw.cpp": "MISSING",
+            "src\\kd_d\\kdmove.cpp": "MISSING",
+            "src\\kd_d\\kdnetemac.cpp": "MISSING",
+            "src\\kd_d\\xxkdsup.cpp": "MISSING",
+            "src\\kd_d\\kdnetio.cpp": "MISSING",
+            "src\\kd_d\\kdcomio.cpp": "MISSING",
+            "src\\kd_d\\kdcpuapi.cpp": "MISSING",
+            "src\\kd_d\\kddata.cpp": "MISSING"
+        }
+    },
+    "ke_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ke_d\\quiesce.cpp": "MISSING",
+            "src\\ke_d\\bugcheck.cpp": "MISSING",
+            "src\\ke_d\\miscc.cpp": "MISSING",
+            "ke_d/kernlini.c": "NonMatching",
+            "src\\ke_d\\protstkc.cpp": "MISSING",
+            "src\\ke_d\\thredobj.cpp": "MISSING",
+            "src\\ke_d\\timerobj.cpp": "MISSING",
+            "src\\ke_d\\intobj.cpp": "MISSING",
+            "src\\ke_d\\exceptn.cpp": "MISSING",
+            "src\\ke_d\\usermodec.cpp": "MISSING",
+            "src\\ke_d\\wait.cpp": "MISSING",
+            "src\\ke_d\\flushc.cpp": "MISSING",
+            "src\\ke_d\\apcobj.cpp": "MISSING",
+            "src\\ke_d\\devquobj.cpp": "MISSING",
+            "src\\ke_d\\dpcobj.cpp": "MISSING",
+            "src\\ke_d\\eventobj.cpp": "MISSING",
+            "src\\ke_d\\mutntobj.cpp": "MISSING",
+            "src\\ke_d\\queueobj.cpp": "MISSING",
+            "src\\ke_d\\semphobj.cpp": "MISSING",
+            "src\\ke_d\\xipi.cpp": "MISSING",
+            "src\\ke_d\\procobj.cpp": "MISSING",
+            "ke_d/ctxswap.c": "NonMatching",
+            "src\\ke_d\\yield.cpp": "MISSING",
+            "src\\ke_d\\trap.cpp": "MISSING",
+            "src\\ke_d\\tls.cpp": "MISSING",
+            "src\\ke_d\\clockint.cpp": "MISSING",
+            "src\\ke_d\\thredsup.cpp": "MISSING",
+            "src\\ke_d\\waitsup.cpp": "MISSING",
+            "src\\ke_d\\thredini.cpp": "MISSING",
+            "src\\ke_d\\apcsup.cpp": "MISSING",
+            "src\\ke_d\\ipi.cpp": "MISSING",
+            "src\\ke_d\\dpcsup.cpp": "MISSING",
+            "src\\ke_d\\timersup.cpp": "MISSING",
+            "src\\ke_d\\protstka.cpp": "MISSING",
+            "src\\ke_d\\profilerint.cpp": "MISSING",
+            "src\\ke_d\\spinlock.cpp": "MISSING",
+            "src\\ke_d\\miscasm.cpp": "MISSING",
+            "src\\ke_d\\usermode.cpp": "MISSING",
+            "src\\ke_d\\flusha.cpp": "MISSING",
+            "src\\ke_d\\irql.cpp": "MISSING",
+            "ke_d/entry.s": "NonMatching",
+            "src\\ke_d\\kernldat.cpp": "MISSING"
+        }
+    },
+    "ldid": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ldid\\ldi.cpp": "MISSING",
+            "src\\ldid\\decapi.cpp": "MISSING",
+            "src\\ldid\\decinit.cpp": "MISSING",
+            "src\\ldid\\decxlat.cpp": "MISSING",
+            "src\\ldid\\decblk.cpp": "MISSING",
+            "src\\ldid\\decin.cpp": "MISSING",
+            "src\\ldid\\decverb.cpp": "MISSING",
+            "src\\ldid\\decalign.cpp": "MISSING",
+            "src\\ldid\\decout.cpp": "MISSING",
+            "src\\ldid\\dectree.cpp": "MISSING",
+            "src\\ldid\\maketbl.cpp": "MISSING",
+            "src\\ldid\\decuncmp.cpp": "MISSING"
+        }
+    },
+    "ldrx_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ldrx_d\\loader.cpp": "MISSING",
+            "src\\ldrx_d\\hash.cpp": "MISSING",
+            "src\\ldrx_d\\xexload.cpp": "MISSING",
+            "src\\ldrx_d\\patch.cpp": "MISSING"
+        }
+    },
+    "libcntd": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\libcntd\\crt.cpp": "MISSING",
+            "src\\libcntd\\sprintf.cpp": "MISSING",
+            "src\\libcntd\\swprintf.cpp": "MISSING",
+            "src\\libcntd\\vsprintf.cpp": "MISSING",
+            "src\\libcntd\\vswprint.cpp": "MISSING",
+            "src\\libcntd\\output.cpp": "MISSING",
+            "src\\libcntd\\ctype.cpp": "MISSING",
+            "src\\libcntd\\cmiscdat.cpp": "MISSING",
+            "src\\libcntd\\mbtowc.cpp": "MISSING",
+            "src\\libcntd\\nlsdata1.cpp": "MISSING",
+            "src\\libcntd\\cvt.cpp": "MISSING",
+            "src\\libcntd\\isctype.cpp": "MISSING",
+            "src\\libcntd\\x10fout.cpp": "MISSING",
+            "src\\libcntd\\constpow.cpp": "MISSING",
+            "src\\libcntd\\snprintf.cpp": "MISSING",
+            "src\\libcntd\\snwprint.cpp": "MISSING",
+            "src\\libcntd\\vsnprint.cpp": "MISSING",
+            "src\\libcntd\\vsnwprnt.cpp": "MISSING",
+            "src\\libcntd\\crtgpr.cpp": "MISSING",
+            "src\\libcntd\\crtfpr.cpp": "MISSING",
+            "src\\libcntd\\crtvmx.cpp": "MISSING",
+            "src\\libcntd\\woutput.cpp": "MISSING",
+            "src\\libcntd\\tolower.cpp": "MISSING",
+            "src\\libcntd\\cfout.cpp": "MISSING",
+            "src\\libcntd\\tenpow.cpp": "MISSING",
+            "src\\libcntd\\memcpyp.cpp": "MISSING",
+            "src\\libcntd\\memsetp.cpp": "MISSING",
+            "src\\libcntd\\strncpy.cpp": "MISSING",
+            "src\\libcntd\\strrchrp.cpp": "MISSING",
+            "src\\libcntd\\wcslen.cpp": "MISSING",
+            "src\\libcntd\\mdsstrncmp.cpp": "MISSING",
+            "src\\libcntd\\wctomb.cpp": "MISSING",
+            "src\\libcntd\\crt0fp.cpp": "MISSING",
+            "src\\libcntd\\_fptostr.cpp": "MISSING",
+            "src\\libcntd\\crt0.cpp": "MISSING",
+            "src\\libcntd\\mantold.cpp": "MISSING",
+            "src\\libcntd\\stricmpp.cpp": "MISSING",
+            "src\\libcntd\\dllsupp.cpp": "MISSING"
+        }
+    },
+    "mass_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\mass_d\\mass.cpp": "MISSING"
+        }
+    },
+    "mic": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\mic\\micenum.cpp": "MISSING"
+        }
+    },
+    "mmx_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\mmx_d\\physical.cpp": "MISSING",
+            "src\\mmx_d\\mmsup.cpp": "MISSING",
+            "src\\mmx_d\\pfnsup.cpp": "MISSING",
+            "src\\mmx_d\\debugsup.cpp": "MISSING",
+            "src\\mmx_d\\virtual.cpp": "MISSING",
+            "src\\mmx_d\\mmmanage.cpp": "MISSING",
+            "src\\mmx_d\\image.cpp": "MISSING"
+        }
+    },
+    "msbignum": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\msbignum\\cryptdsa.cpp": "MISSING",
+            "src\\msbignum\\sha1.cpp": "MISSING",
+            "src\\msbignum\\divisibility.cpp": "MISSING",
+            "src\\msbignum\\digitogcd.cpp": "MISSING",
+            "src\\msbignum\\primechk.cpp": "MISSING",
+            "src\\msbignum\\gcdexjac.cpp": "MISSING",
+            "src\\msbignum\\mpremov2.cpp": "MISSING",
+            "src\\msbignum\\mpsqrt.cpp": "MISSING",
+            "src\\msbignum\\dsqrt.cpp": "MISSING"
+        }
+    },
+    "mtpd": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\mtpd\\proximity.cpp": "MISSING"
+        }
+    },
+    "nic_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\nic_d\\nicwireless.cpp": "MISSING",
+            "src\\nic_d\\nicemac.cpp": "MISSING",
+            "src\\nic_d\\phyemac.cpp": "MISSING",
+            "src\\nic_d\\drvmain.cpp": "MISSING",
+            "src\\nic_d\\nickd.cpp": "MISSING",
+            "src\\nic_d\\nicuser.cpp": "MISSING",
+            "src\\nic_d\\nicwirelessnull.cpp": "MISSING",
+            "src\\nic_d\\nicbase.cpp": "MISSING",
+            "src\\nic_d\\NicPrecompile.cpp": "MISSING"
+        }
+    },
+    "nomnil": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\nomnil\\driverloader.cpp": "MISSING"
+        }
+    },
+    "ntosrtl": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ntosrtl\\dmprint.cpp": "MISSING",
+            "src\\ntosrtl\\string.cpp": "MISSING",
+            "src\\ntosrtl\\assert.cpp": "MISSING",
+            "src\\ntosrtl\\exdsptch.cpp": "MISSING",
+            "src\\ntosrtl\\checksum.cpp": "MISSING",
+            "src\\ntosrtl\\error.cpp": "MISSING",
+            "src\\ntosrtl\\time.cpp": "MISSING",
+            "src\\ntosrtl\\debug.cpp": "MISSING",
+            "src\\ntosrtl\\stktrace.cpp": "MISSING",
+            "src\\ntosrtl\\critsect.cpp": "MISSING",
+            "src\\ntosrtl\\getcalr.cpp": "MISSING",
+            "src\\ntosrtl\\xcptmisc.cpp": "MISSING",
+            "src\\ntosrtl\\imagedir.cpp": "MISSING",
+            "src\\ntosrtl\\chandler.cpp": "MISSING",
+            "src\\ntosrtl\\debugstb.cpp": "MISSING",
+            "src\\ntosrtl\\movemem.cpp": "MISSING",
+            "src\\ntosrtl\\resource.cpp": "MISSING",
+            "src\\ntosrtl\\rtlprint.cpp": "MISSING",
+            "src\\ntosrtl\\byteswap.cpp": "MISSING"
+        }
+    },
+    "nuicam_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\nuicam_d\\devicerequest.cpp": "MISSING",
+            "src\\nuicam_d\\nuicamdbg.cpp": "MISSING",
+            "src\\nuicam_d\\nuicamdrv.cpp": "MISSING",
+            "src\\nuicam_d\\nuicamcmd.cpp": "MISSING",
+            "src\\nuicam_d\\debuglogging.cpp": "MISSING",
+            "src\\nuicam_d\\coloroperations.cpp": "MISSING",
+            "src\\nuicam_d\\initialization.cpp": "MISSING",
+            "src\\nuicam_d\\isoch.cpp": "MISSING",
+            "src\\nuicam_d\\instrumentation.cpp": "MISSING",
+            "src\\nuicam_d\\mt9m114.cpp": "MISSING",
+            "src\\nuicam_d\\mt9m112.cpp": "MISSING",
+            "src\\nuicam_d\\imagestate2.cpp": "MISSING",
+            "src\\nuicam_d\\decompress.cpp": "MISSING",
+            "src\\nuicam_d\\nudgeimagestream.cpp": "MISSING",
+            "src\\nuicam_d\\colorregisters.cpp": "MISSING",
+            "src\\nuicam_d\\parametersetting.cpp": "MISSING"
+        }
+    },
+    "nullcable_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\nullcable_d\\nullcable.cpp": "MISSING"
+        }
+    },
+    "ob_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\ob_d\\obhandle.cpp": "MISSING",
+            "src\\ob_d\\obdir.cpp": "MISSING",
+            "src\\ob_d\\oblink.cpp": "MISSING",
+            "src\\ob_d\\obref.cpp": "MISSING",
+            "src\\ob_d\\obtable.cpp": "MISSING",
+            "src\\ob_d\\obmanage.cpp": "MISSING",
+            "src\\ob_d\\obwait.cpp": "MISSING",
+            "src\\ob_d\\obcreate.cpp": "MISSING",
+            "src\\ob_d\\obthread.cpp": "MISSING"
+        }
+    },
+    "odfx_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\odfx_d\\driver.cpp": "MISSING",
+            "src\\odfx_d\\cdfxfs.cpp": "MISSING",
+            "src\\odfx_d\\udfxfs.cpp": "MISSING",
+            "src\\odfx_d\\gdfxfs.cpp": "MISSING",
+            "src\\odfx_d\\cachesup.cpp": "MISSING",
+            "src\\odfx_d\\mountvol.cpp": "MISSING",
+            "src\\odfx_d\\devctrl.cpp": "MISSING",
+            "src\\odfx_d\\dirctrl.cpp": "MISSING",
+            "src\\odfx_d\\volinfo.cpp": "MISSING",
+            "src\\odfx_d\\fileinfo.cpp": "MISSING",
+            "src\\odfx_d\\read.cpp": "MISSING",
+            "src\\odfx_d\\close.cpp": "MISSING",
+            "src\\odfx_d\\create.cpp": "MISSING",
+            "src\\odfx_d\\fcbsup.cpp": "MISSING"
+        }
+    },
+    "omni": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\omni\\services.cpp": "MISSING",
+            "src\\omni\\dbgcmd.cpp": "MISSING",
+            "src\\omni\\usb.cpp": "MISSING",
+            "src\\omni\\config.cpp": "MISSING",
+            "src\\omni\\protocol.cpp": "MISSING",
+            "src\\omni\\debug.cpp": "MISSING",
+            "src\\omni\\scan.cpp": "MISSING",
+            "src\\omni\\optid.cpp": "MISSING",
+            "src\\omni\\utility.cpp": "MISSING",
+            "src\\omni\\regioncountry.cpp": "MISSING",
+            "src\\omni\\blockack.cpp": "MISSING",
+            "src\\omni\\wmm.cpp": "MISSING",
+            "src\\omni\\events.cpp": "MISSING",
+            "src\\omni\\regioncountry_omnil.cpp": "MISSING",
+            "src\\omni\\regioncountry_wavem.cpp": "MISSING"
+        }
+    },
+    "piaf": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\piaf\\driver.cpp": "MISSING"
+        }
+    },
+    "rawx": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\rawx\\driver.cpp": "MISSING",
+            "src\\rawx\\mountvol.cpp": "MISSING",
+            "src\\rawx\\synch.cpp": "MISSING",
+            "src\\rawx\\cleanup.cpp": "MISSING",
+            "src\\rawx\\volinfo.cpp": "MISSING",
+            "src\\rawx\\fileinfo.cpp": "MISSING",
+            "src\\rawx\\close.cpp": "MISSING",
+            "src\\rawx\\create.cpp": "MISSING"
+        }
+    },
+    "sata_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\sata_d\\cdrom.cpp": "MISSING",
+            "src\\sata_d\\disk.cpp": "MISSING",
+            "src\\sata_d\\channel.cpp": "MISSING",
+            "src\\sata_d\\hvfuncs.cpp": "MISSING",
+            "src\\sata_d\\ema.cpp": "MISSING",
+            "src\\sata_d\\failures.cpp": "MISSING"
+        }
+    },
+    "sfcx_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\sfcx_d\\sfcx.cpp": "MISSING",
+            "src\\sfcx_d\\mu.cpp": "MISSING",
+            "src\\sfcx_d\\mmcx.cpp": "MISSING",
+            "src\\sfcx_d\\legacy.cpp": "MISSING",
+            "src\\sfcx_d\\synch.cpp": "MISSING",
+            "src\\sfcx_d\\flashecc.cpp": "MISSING"
+        }
+    },
+    "stfs": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\stfs\\driver.cpp": "MISSING",
+            "src\\stfs\\worker.cpp": "MISSING",
+            "src\\stfs\\stfsup.cpp": "MISSING",
+            "src\\stfs\\blocksup.cpp": "MISSING",
+            "src\\stfs\\read.cpp": "MISSING",
+            "src\\stfs\\create.cpp": "MISSING",
+            "src\\stfs\\allocsup.cpp": "MISSING",
+            "src\\stfs\\iosup.cpp": "MISSING",
+            "src\\stfs\\cleanup.cpp": "MISSING",
+            "src\\stfs\\devctrl.cpp": "MISSING",
+            "src\\stfs\\dirctrl.cpp": "MISSING",
+            "src\\stfs\\volinfo.cpp": "MISSING",
+            "src\\stfs\\flush.cpp": "MISSING",
+            "src\\stfs\\fileinfo.cpp": "MISSING",
+            "src\\stfs\\write.cpp": "MISSING",
+            "src\\stfs\\close.cpp": "MISSING",
+            "src\\stfs\\fcbsup.cpp": "MISSING"
+        }
+    },
+    "svod": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\svod\\driver.cpp": "MISSING"
+        }
+    },
+    "usbd_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\usbd_d\\basehcd.cpp": "MISSING",
+            "src\\usbd_d\\usbd.cpp": "MISSING",
+            "src\\usbd_d\\timerobj.cpp": "MISSING",
+            "src\\usbd_d\\titledrv.cpp": "MISSING",
+            "src\\usbd_d\\hubclass.cpp": "MISSING",
+            "src\\usbd_d\\security.cpp": "MISSING",
+            "src\\usbd_d\\ohcihcd.cpp": "MISSING",
+            "src\\usbd_d\\ehcihcd.cpp": "MISSING",
+            "src\\usbd_d\\natalhub.cpp": "MISSING"
+        }
+    },
+    "vd_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\vd_d\\hdcp.cpp": "MISSING",
+            "src\\vd_d\\csc.cpp": "MISSING",
+            "src\\vd_d\\engsup.cpp": "MISSING",
+            "src\\vd_d\\uem.cpp": "MISSING",
+            "src\\vd_d\\mv.cpp": "MISSING",
+            "src\\vd_d\\ringbuf.cpp": "MISSING",
+            "src\\vd_d\\ana.cpp": "MISSING",
+            "src\\vd_d\\edid.cpp": "MISSING",
+            "src\\vd_d\\crtc.cpp": "MISSING",
+            "src\\vd_d\\drvinit.cpp": "MISSING",
+            "src\\vd_d\\edram.cpp": "MISSING",
+            "src\\vd_d\\scaler.cpp": "MISSING",
+            "src\\vd_d\\persist.cpp": "MISSING",
+            "src\\vd_d\\intr.cpp": "MISSING",
+            "src\\vd_d\\timinggen.cpp": "MISSING",
+            "src\\vd_d\\notify.cpp": "MISSING",
+            "src\\vd_d\\power.cpp": "MISSING",
+            "src\\vd_d\\syscmd.cpp": "MISSING",
+            "src\\vd_d\\ddc.cpp": "MISSING",
+            "src\\vd_d\\dump.cpp": "MISSING",
+            "src\\vd_d\\microcode.cpp": "MISSING",
+            "src\\vd_d\\globals.cpp": "MISSING",
+            "src\\vd_d\\di.cpp": "MISSING"
+        }
+    },
+    "vehandler_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\vehandler_d\\vehandler.cpp": "MISSING"
+        }
+    },
+    "wificmn": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\wificmn\\wifisec.cpp": "MISSING",
+            "src\\wificmn\\wifireg.cpp": "MISSING",
+            "src\\wificmn\\wifiutil.cpp": "MISSING",
+            "src\\wificmn\\wpa.cpp": "MISSING"
+        }
+    },
+    "xauddrv_unified_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xauddrv_unified_d\\digitaloutcomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\renderdriver.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\audioout.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\audiodriver.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\analogoutcomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\virtualsurroundencoder.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\dolbypl2encoder.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\firfilter.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\decayloop.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\fftwrapper.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\chipcorderdevice.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\muxcomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\dolbydigitalcomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\virtualsurroundcomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\pliicomponent.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\delayline.cpp": "MISSING",
+            "src\\xauddrv_unified_d\\Unified.cpp": "MISSING"
+        }
+    },
+    "xcam": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xcam\\xcamapi.cpp": "MISSING",
+            "src\\xcam\\xcamdrv.cpp": "MISSING",
+            "src\\xcam\\xcamutil.cpp": "MISSING",
+            "src\\xcam\\xcamio.cpp": "MISSING",
+            "src\\xcam\\xcamoobe.cpp": "MISSING"
+        }
+    },
+    "xecrypt": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xecrypt\\aes.cpp": "MISSING",
+            "src\\xecrypt\\dh.cpp": "MISSING",
+            "src\\xecrypt\\pkcs1.cpp": "MISSING",
+            "src\\xecrypt\\des.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecdh_ecdsa.cpp": "MISSING",
+            "src\\xecrypt\\sha256.cpp": "MISSING",
+            "src\\xecrypt\\sha384.cpp": "MISSING",
+            "src\\xecrypt\\sha512.cpp": "MISSING",
+            "src\\xecrypt\\bn3.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecnistbin.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecnistkob.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecnistgfp.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecusenw.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecurve.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpalloctrace.cpp": "MISSING",
+            "src\\xecrypt\\asym_bignum.cpp": "MISSING",
+            "src\\xecrypt\\asym_modular.cpp": "MISSING",
+            "src\\xecrypt\\asym_ecproj.cpp": "MISSING",
+            "src\\xecrypt\\asym_eccrypt.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2nist.cpp": "MISSING",
+            "src\\xecrypt\\asym_eckob2.cpp": "MISSING",
+            "src\\xecrypt\\asym_field.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpaddsubcmp.cpp": "MISSING",
+            "src\\xecrypt\\asym_kinitpo.cpp": "MISSING",
+            "src\\xecrypt\\asym_kinitpr.cpp": "MISSING",
+            "src\\xecrypt\\asym_kmuladd.cpp": "MISSING",
+            "src\\xecrypt\\asym_kinvert.cpp": "MISSING",
+            "src\\xecrypt\\asym_modmulch1.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpgcdex.cpp": "MISSING",
+            "src\\xecrypt\\asym_kexpon.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2exgcd.cpp": "MISSING",
+            "src\\xecrypt\\asym_field2p.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2polyi.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2irred.cpp": "MISSING",
+            "src\\xecrypt\\asym_modsqrt.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2mulx.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2mulk.cpp": "MISSING",
+            "src\\xecrypt\\asym_gf2dredg.cpp": "MISSING",
+            "src\\xecrypt\\asym_modexp2006.cpp": "MISSING",
+            "src\\xecrypt\\asym_lucas.cpp": "MISSING",
+            "src\\xecrypt\\sym_aes_128_192_256.cpp": "MISSING",
+            "src\\xecrypt\\sym_aes_keyschedule.cpp": "MISSING",
+            "src\\xecrypt\\sym_aes_gcm.cpp": "MISSING",
+            "src\\xecrypt\\sig.cpp": "MISSING",
+            "src\\xecrypt\\sigfmt.cpp": "MISSING",
+            "src\\xecrypt\\sigver.cpp": "MISSING",
+            "src\\xecrypt\\modexp.cpp": "MISSING",
+            "src\\xecrypt\\modfast.cpp": "MISSING",
+            "src\\xecrypt\\rsagen.cpp": "MISSING",
+            "src\\xecrypt\\rsa.cpp": "MISSING",
+            "src\\xecrypt\\parve.cpp": "MISSING",
+            "src\\xecrypt\\md5.cpp": "MISSING",
+            "src\\xecrypt\\sha.cpp": "MISSING",
+            "src\\xecrypt\\rc4.cpp": "MISSING",
+            "src\\xecrypt\\rotsum.cpp": "MISSING",
+            "src\\xecrypt\\aesfast.cpp": "MISSING",
+            "src\\xecrypt\\bn.cpp": "MISSING",
+            "src\\xecrypt\\sigcmp.cpp": "MISSING",
+            "src\\xecrypt\\bn4.cpp": "MISSING",
+            "src\\xecrypt\\bn1.cpp": "MISSING",
+            "src\\xecrypt\\bn5.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpinit.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpalloc.cpp": "MISSING",
+            "src\\xecrypt\\sha1fast.cpp": "MISSING",
+            "src\\xecrypt\\asym_divide.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpscrambled.cpp": "MISSING",
+            "src\\xecrypt\\asym_mprand.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpsigned.cpp": "MISSING",
+            "src\\xecrypt\\asym_modexp.cpp": "MISSING",
+            "src\\xecrypt\\asym_mpmul22.cpp": "MISSING",
+            "src\\xecrypt\\bnfast2.cpp": "MISSING",
+            "src\\xecrypt\\bnfast3.cpp": "MISSING",
+            "src\\xecrypt\\bnfast1.cpp": "MISSING",
+            "src\\xecrypt\\bn2.cpp": "MISSING",
+            "src\\xecrypt\\modinv.cpp": "MISSING",
+            "src\\xecrypt\\bnfast5.cpp": "MISSING",
+            "src\\xecrypt\\bnfast7.cpp": "MISSING",
+            "src\\xecrypt\\bnfast8.cpp": "MISSING",
+            "src\\xecrypt\\bnfast6.cpp": "MISSING",
+            "src\\xecrypt\\bnfast4.cpp": "MISSING",
+            "src\\xecrypt\\rc4fast.cpp": "MISSING",
+            "src\\xecrypt\\sym_sha224.cpp": "MISSING",
+            "src\\xecrypt\\memdiff.cpp": "MISSING",
+            "src\\xecrypt\\bnfast.cpp": "MISSING"
+        }
+    },
+    "xekeys_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xekeys_d\\xekeys.cpp": "MISSING"
+        }
+    },
+    "xinput_d": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xinput_d\\rgc.cpp": "MISSING",
+            "src\\xinput_d\\tid.cpp": "MISSING",
+            "src\\xinput_d\\vgchandler.cpp": "MISSING",
+            "src\\xinput_d\\tidwired.cpp": "MISSING",
+            "src\\xinput_d\\jumped.cpp": "MISSING",
+            "src\\xinput_d\\devauthrgc.cpp": "MISSING",
+            "src\\xinput_d\\xinpdrv.cpp": "MISSING",
+            "src\\xinput_d\\ird.cpp": "MISSING",
+            "src\\xinput_d\\wgc.cpp": "MISSING",
+            "src\\xinput_d\\tidwirel.cpp": "MISSING"
+        }
+    },
+    "xvoice": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xvoice\\mca.cpp": "MISSING",
+            "src\\xvoice\\rmc.cpp": "MISSING",
+            "src\\xvoice\\rvc.cpp": "MISSING",
+            "src\\xvoice\\wvc.cpp": "MISSING",
+            "src\\xvoice\\devauthrvc.cpp": "MISSING",
+            "src\\xvoice\\motor.cpp": "MISSING",
+            "src\\xvoice\\vvchandler.cpp": "MISSING",
+            "src\\xvoice\\pmc.cpp": "MISSING"
+        }
+    },
+    "xwpplibd": {
+        "progress_category": "main",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "src\\xwpplibd\\xwpp.cpp": "MISSING"
+        }
+    }
+}

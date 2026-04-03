@@ -290,7 +290,7 @@ EXE = ".exe" if is_windows() else ""
 
 
 def file_is_asm(path: Path) -> bool:
-    return path.suffix.lower() == ".s"
+    return path.suffix.lower() in (".s", ".asm")
 
 
 def file_is_c(path: Path) -> bool:
@@ -680,7 +680,6 @@ def generate_build_ninja(
         mwcc_extab_implicit.append(transform_dep)
         mwcc_sjis_extab_implicit.append(transform_dep)
 
-
     # n.comment("Link ELF file")
     # n.rule(
     #     name="link",
@@ -719,7 +718,18 @@ def generate_build_ninja(
     )
     n.newline()
 
-    # n.comment("MWCC build (with UTF-8 to Shift JIS wrapper)")
+    # MASM (ml.exe) — lives alongside cl.exe in the compiler version directory
+    ml_exe = compiler_path / "ml.exe"
+    masm_cmd = f"{wrapper_cmd}{ml_exe} $asflags /c /Fo$out $in"
+    masm_implicit: List[Optional[Path]] = [compilers_implicit or ml_exe, wrapper_implicit]
+
+    n.comment("MASM build (ml.exe)")
+    n.rule(
+        name="masm",
+        command=masm_cmd,
+        description="MASM $out",
+    )
+    n.newline()
     # n.rule(
     #     name="mwcc_sjis",
     #     command=mwcc_sjis_cmd,
@@ -999,27 +1009,23 @@ def generate_build_ninja(
         def asm_build(
             obj: Object, src_path: Path, obj_path: Optional[Path]
         ) -> Optional[Path]:
-            if obj.options["asflags"] is None:
-                sys.exit("ProjectConfig.asflags missing")
-            asflags_str = make_flags_str(obj.options["asflags"])
-            if len(obj.options["extra_asflags"]) > 0:
-                extra_asflags_str = make_flags_str(obj.options["extra_asflags"])
-                asflags_str += " " + extra_asflags_str
-
             # Avoid creating duplicate build rules
             if obj_path is None or obj_path in source_added:
                 return obj_path
             source_added.add(obj_path)
 
-            # Add assembler build rule
+            asflags = obj.options["asflags"] or []
+            extra_asflags = obj.options["extra_asflags"] or []
+            asflags_str = make_flags_str(list(asflags) + list(extra_asflags))
+
             lib_name = obj.options["lib"]
             n.comment(f"{obj.name}: {lib_name} (linked {obj.completed})")
             n.build(
                 outputs=obj_path,
-                rule="as",
+                rule="masm",
                 inputs=src_path,
                 variables={"asflags": asflags_str},
-                implicit=gnu_as_implicit,
+                implicit=masm_implicit,
                 order_only="pre-compile",
             )
             n.newline()
@@ -1047,7 +1053,7 @@ def generate_build_ninja(
                     # Add C/C++ build rule
                     built_obj_path = c_build(obj, obj.src_path)
                 elif file_is_asm(obj.src_path):
-                    # Add assembler build rule
+                    # Add assembler build rule (.s / .asm → ml.exe)
                     built_obj_path = asm_build(obj, obj.src_path, obj.src_obj_path)
                 else:
                     sys.exit(f"Unknown source file type {obj.src_path}")

@@ -1,0 +1,13 @@
+Diagnostics:
+  Suppress:
+    - "reserved-id-macro"
+    - "expected_unqualified_id"
+    - "redefinition_different_typedef"
+    - "attribute_not_supported_on_arch"
+    - "use_of_tag_name_without_tag"
+
+CompileFlags:
+  Add:
+    - "--driver-mode=cl"
+    - "-fms-extensions"
+    - "-fms-compatibility"
