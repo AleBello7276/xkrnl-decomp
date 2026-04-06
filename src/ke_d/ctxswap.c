@@ -4,6 +4,7 @@
 
 /* clang-format off */
 
-INLINE_ASM_FUNC(KiIdleLoop)
-    blr
-END_ASM_FUNC
+//INLINE_ASM_FUNC(KiIdleLoop)
+//    blr
+//END_ASM_FUNC
+//

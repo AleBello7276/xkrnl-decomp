@@ -13,9 +13,9 @@ KiProcessorStartup proc
     li      r0, 0   ; clear R0
     mtlr    r0      ; clear LR
 
-    lbz     r0, PCR.m_threadNum(r13)    ; get m_threadNum, r13 points to current hardware thread PCR
-    cmpwi   r0, 0                       ; is thread 0 ? (boot processor)
-    bne     nonBootProcessorsPath       ; jump if *Not thread 0*
+    lbz     r0, KPCR.m_ProcessorNum(r13)    ; get m_threadNum, r13 points to current hardware thread PCR
+    cmpwi   r0, 0                           ; is thread 0 ? (boot processor)
+    bne     nonBootProcessorsPath           ; jump if *Not thread 0*
 
     ; boot processor
     lis     r31, offset KiInitializeKernelStackBase        ; ;
@@ -29,7 +29,7 @@ KiProcessorStartup proc
     b      KiIdleLoop             ; loop
 
 nonBootProcessorsPath:
-    lwz     r1, PCR.m_stackPtr(r13)    ; get thread stack
+    lwz     r1, KPCR.m_stackPtr(r13)    ; get thread stack
     subi    r1, r1, 0f0h
     bl      KiInitializeNonBootProcessor
 

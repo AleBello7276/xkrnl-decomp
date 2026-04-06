@@ -254,7 +254,7 @@
         "cflags": "base",
         "objects": {
             "src\\kd_d\\kdnet.cpp": "MISSING",
-            "src\\kd_d\\kdinit.cpp": "MISSING",
+            "kd_d/kdinit.c": "NonMatching",
             "src\\kd_d\\kdlock.cpp": "MISSING",
             "src\\kd_d\\kdapi.cpp": "MISSING",
             "src\\kd_d\\network.cpp": "MISSING",
@@ -271,7 +271,7 @@
             "src\\kd_d\\kdnetio.cpp": "MISSING",
             "src\\kd_d\\kdcomio.cpp": "MISSING",
             "src\\kd_d\\kdcpuapi.cpp": "MISSING",
-            "src\\kd_d\\kddata.cpp": "MISSING"
+            "kd_d/kddata.c": "NonMatching"
         }
     },
     "ke_d": {
@@ -319,7 +319,7 @@
             "src\\ke_d\\usermode.cpp": "MISSING",
             "src\\ke_d\\flusha.cpp": "MISSING",
             "src\\ke_d\\irql.cpp": "MISSING",
-            "ke_d/entry.s": "NonMatching",
+            "ke_d/entry.s": "Matching",
             "src\\ke_d\\kernldat.cpp": "MISSING"
         }
     },
@@ -421,9 +421,9 @@
         "objects": {
             "src\\mmx_d\\physical.cpp": "MISSING",
             "src\\mmx_d\\mmsup.cpp": "MISSING",
-            "src\\mmx_d\\pfnsup.cpp": "MISSING",
+            "mmx_d/pfnsup.c": "NonMatching",
             "src\\mmx_d\\debugsup.cpp": "MISSING",
-            "src\\mmx_d\\virtual.cpp": "MISSING",
+            "mmx_d/virtual.c": "NonMatching",
             "src\\mmx_d\\mmmanage.cpp": "MISSING",
             "src\\mmx_d\\image.cpp": "MISSING"
         }

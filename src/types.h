@@ -2,17 +2,22 @@
 // not just types, general stuff and utils
 //
 
-#define INLINE_ASM_FUNC(name)                                                                                \
-    __declspec(naked) void name(void) {                                                                      \
-        __asm {
-#define END_ASM_FUNC                                                                                         \
-    }                                                                                                        \
-    }
-
 #define ALLOC_SECT(section) __declspec(allocate(section))
 
-// general offsetof, used also for inline assembly, specification mentions the possibility of doing :
-// `offset SomeStruct.field(reg)` but that seam to not work idk why
 #define offsetof(type, member) ((size_t)&(((type*)0)->member))
 
 typedef unsigned char uint8_t;
+typedef char int8_t;
+typedef unsigned short uint16_t;
+typedef short int16_t;
+typedef unsigned int uint32_t;
+typedef int int32_t;
+typedef unsigned long long uint64_t;
+typedef long long int64_t;
+
+// booleans
+typedef unsigned int bool;
+#define true 1
+#define false 0
+
+#define nullptr 0x0

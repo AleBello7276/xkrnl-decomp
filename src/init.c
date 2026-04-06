@@ -1,3 +1,3 @@
 #include "init.h"
 
-// HardwareInfo XboxHardwareInfo = {0x813, {0}};
+HardwareInfo XboxHardwareInfo = {0x813, {0}};
