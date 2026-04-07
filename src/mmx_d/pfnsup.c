@@ -37,7 +37,7 @@ PfnRegion* MiDecodeMemoryRegionType(int32_t unk0) {
 uint32_t MiRemoveAnySmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2);
 
 void MiRemoveZeroSmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
-    assert(GetKPCR->m_unk_0x18 != 2);
+    assert(GetKPCR->m_currentIrql == 2);
 
     KeZeroPage(MiRemoveAnySmallPage(region, unk1, unk2));
 }
@@ -46,16 +46,16 @@ void MiRemoveZeroSmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
 uint32_t MiRemoveAnyLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
     uint32_t uVar2;
 
-    assert(unk1 > 0x12);
-    assert(GetKPCR->m_unk_0x18 != 2);
-    assert(region->m_unk0x4c == 0);
-    assert(region->unk0[32] == 0xfffe);
+    assert(!(unk1 > 0x12));
+    assert(GetKPCR->m_currentIrql == 2);
+    assert(region->m_unk0x4c != 0);
+    assert(region->unk0[32] != 0xfffe);
 
     uVar2 = region->unk0[32] * 8;
     if (uVar2 < region->m_unk0xec || region->m_unk0xf0 < uVar2) {
         if ((region->m_unk0xfc == 0 && region->m_unk0x100 == 0) || uVar2 < region->m_unk0xfc
             || region->m_unk0x100 < uVar2) {
-            assert(1);
+            assert(0);
         }
     }
 }
@@ -66,11 +66,22 @@ uint32_t MiRemoveZeroLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) 
     uint32_t count;
     uint32_t i;
 
-    assert(GetKPCR->m_unk_0x18 != 2);
+    assert(GetKPCR->m_currentIrql == 2);
 
     count = MiRemoveAnyLargePage(region, unk1, unk2);
     for (i = 0; i < PAGE_COUNT; i++) {
         KeZeroPage(i + count);
     }
     return count;
+}
+
+// TODO, figure out those magic number addresses
+PfnRegion* MiPfnRegionFromKernelAddress(uint32_t address) {
+    if ((address + 0xd0000000U <= 0x7feffff) || (address + 0x90000000 <= 0x7feffff)) {
+        return &MmTitlePfnRegion;
+    }
+    if ((0x5beffff >= address + 0xc6000000U) || (0x4feffff >= address + 0x86000000U)) {
+        return &MmSystemPfnRegion;
+    }
+    return nullptr;
 }

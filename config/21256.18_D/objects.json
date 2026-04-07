@@ -419,8 +419,8 @@
         "mw_version": "X360/16.00.11886.00",
         "cflags": "base",
         "objects": {
-            "src\\mmx_d\\physical.cpp": "MISSING",
-            "src\\mmx_d\\mmsup.cpp": "MISSING",
+            "mmx_d/physical.c": "NonMatching",
+            "mmx_d/mmsup.c": "NonMatching",
             "mmx_d/pfnsup.c": "NonMatching",
             "src\\mmx_d\\debugsup.cpp": "MISSING",
             "mmx_d/virtual.c": "NonMatching",

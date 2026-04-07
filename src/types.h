@@ -15,9 +15,13 @@ typedef int int32_t;
 typedef unsigned long long uint64_t;
 typedef long long int64_t;
 
+typedef uint32_t uintptr_t;
+
 // booleans
 typedef unsigned int bool;
 #define true 1
 #define false 0
 
 #define nullptr 0x0
+
+typedef uint32_t KSPIN_LOCK;  // Kernel Spin Lock

@@ -7,9 +7,13 @@
 #include "init.h"
 #include "types.h"
 
+// IRQLs
+typedef uint8_t KIRQL;
+#define IRQL_HIGH_LEVEL 0x7c
+
 typedef struct _KPCR {
     char paddd[24];
-    char m_unk_0x18;
+    KIRQL m_currentIrql;
     char pad[87];
     uint32_t m_stackPtr;
     char pad2[152];
@@ -29,9 +33,13 @@ typedef struct _MEMORY_DESCRIPTOR {
     uint32_t unk3;
 } MEMORY_DESCRIPTOR;
 
-// IRQLs
-typedef uint8_t KIRQL;
-#define IRQL_HIGH_LEVEL 0x7c
+typedef struct _MMADDRESS_NODE {
+    int unk0;
+    int unk1;
+    struct _MMADDRESS_NODE* m_parent;
+    struct _MMADDRESS_NODE* m_leftLeaf;
+    struct _MMADDRESS_NODE* m_rightLeaf;
+} MMADDRESS_NODE;
 
 //
 // INTRINSICS, move this later!
@@ -50,6 +58,6 @@ void __setr13(uint64_t);
 #define GetKPCR ((KPCR*)GetR13())
 
 #define assert(expr)                                                                                         \
-    if (expr) {                                                                                              \
+    if (!(expr)) {                                                                                           \
         __asm {twi 31, r0, 0x19}                                                                                \
     }
