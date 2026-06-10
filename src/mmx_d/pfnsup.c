@@ -19,19 +19,30 @@ PfnRegion MmTitlePfnRegion
 
 // NON_MATCHING
 PfnRegion* MiDecodeMemoryRegionType(int32_t unk0) {
+    PfnRegion* result;
     if (unk0 == 0) {
         if (KeGetCurrentProcessType() == 1) {
-            return &MmTitlePfnRegion;
+            goto ret_title;
         }
+        goto ret_system;
+    }
+    if (unk0 == 3)
+        goto ret_title;
+    if (unk0 == 4)
         unk0 = 2;
-    }
-    if (unk0 == 1) {
-        return &MmTitlePfnRegion;
-    }
-    if (unk0 != 2) {
-        return nullptr;
-    }
-    return &MmSystemPfnRegion;
+    if (unk0 == 1)
+        goto ret_title;
+    if (unk0 == 2)
+        goto ret_system;
+
+    return nullptr;
+ret_title:
+    result = &MmTitlePfnRegion;
+    return result;
+ret_system:
+    result = &MmSystemPfnRegion;
+done:
+    return result;
 }
 
 uint32_t MiRemoveAnySmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2);
@@ -75,13 +86,20 @@ uint32_t MiRemoveZeroLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) 
     return count;
 }
 
-// TODO, figure out those magic number addresses
 PfnRegion* MiPfnRegionFromKernelAddress(uint32_t address) {
-    if ((address + 0xd0000000U <= 0x7feffff) || (address + 0x90000000 <= 0x7feffff)) {
+    if ((address - 0x30000000 <= 0x7feffff) || (address - 0x70000000 <= 0x7feffff)) {
         return &MmTitlePfnRegion;
     }
-    if ((0x5beffff >= address + 0xc6000000U) || (0x4feffff >= address + 0x86000000U)) {
+    if ((address - 0x3a000000 <= 0x5beffff) || (address - 0x7a000000 <= 0x4feffff)) {
         return &MmSystemPfnRegion;
     }
-    return nullptr;
+    return 0;
+}
+
+uint32_t MiReadPhysicalMappingTable(uint8_t* table, uint32_t index) {
+    uint32_t byte = table[index >> 1];
+    if (index & 1) {
+        return byte >> 4;
+    }
+    return byte & 0xF;
 }

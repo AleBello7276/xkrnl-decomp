@@ -50,7 +50,7 @@ void __GPRSetReg(uint32_t, uint64_t);
 #define GetGPR(x) (uint64_t)__GPRGetReg(x)
 #define SetGPR(x, y) __GPRSetReg(x, y)
 
-void* __getr13();
+unsigned int __getr13();
 void __setr13(uint64_t);
 #define GetR13() __getr13()
 #define SetR13(x) __setr13(x)
