@@ -25,3 +25,8 @@ typedef unsigned int bool;
 #define nullptr 0x0
 
 typedef uint32_t KSPIN_LOCK;  // Kernel Spin Lock
+
+typedef uint32_t size_t;
+
+typedef void VOID;
+typedef VOID* PVOID;

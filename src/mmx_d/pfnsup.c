@@ -17,32 +17,25 @@ PfnRegion MmTitlePfnRegion
         0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE, 0xFFFE},
        0};
 
-// NON_MATCHING
-PfnRegion* MiDecodeMemoryRegionType(int32_t unk0) {
-    PfnRegion* result;
-    if (unk0 == 0) {
-        if (KeGetCurrentProcessType() == 1) {
-            goto ret_title;
-        }
-        goto ret_system;
+PfnRegion* MiDecodeMemoryRegionType(int32_t type) {
+    if (type == 0) {
+        if (KeGetCurrentProcessType() == 1)
+            goto title;
+        goto system;
     }
-    if (unk0 == 3)
-        goto ret_title;
-    if (unk0 == 4)
-        unk0 = 2;
-    if (unk0 == 1)
-        goto ret_title;
-    if (unk0 == 2)
-        goto ret_system;
-
-    return nullptr;
-ret_title:
-    result = &MmTitlePfnRegion;
-    return result;
-ret_system:
-    result = &MmSystemPfnRegion;
-done:
-    return result;
+    if (type == 3)
+        goto title;
+    if (type == 4)
+        type = 2;
+    if (type == 1)
+        goto title;
+    if (type == 2)
+        goto system;
+    return 0;
+title:
+    return &MmTitlePfnRegion;
+system:
+    return &MmSystemPfnRegion;
 }
 
 uint32_t MiRemoveAnySmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2);

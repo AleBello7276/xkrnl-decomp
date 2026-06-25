@@ -391,31 +391,31 @@ void MmSetFsCacheElementIndex(uint32_t address, uint32_t index) {
 }
 
 void MiZeroAndFlushPtes(uint32_t pteBase, uint32_t count) {
-    struct {
-        uint32_t count;
-        uint32_t entries[32];
-    } flush;
-    uint32_t endPte;
-    uint32_t currentPte;
-
-    assert(pteBase <= 0x3FFFFFFF);
-
-    flush.count = 0;
-    endPte = pteBase + count * 4;
-    currentPte = pteBase;
-
-    while (currentPte < endPte) {
-        *(uint32_t*)currentPte = 0;
-        flush.entries[flush.count] = currentPte << 10;
-        flush.count++;
-        if (flush.count == 32) {
-            flush.count = 0;
-            KeFlushMultipleTb((void*)32, flush.entries);
-        }
-        currentPte += 4;
-    }
-
-    if (flush.count != 0) {
-        KeFlushMultipleTb((void*)flush.count, flush.entries);
-    }
+    // struct {
+    //     uint32_t count;
+    //     uint32_t entries[32];
+    // } flush;
+    // uint32_t endPte;
+    // uint32_t currentPte;
+    //
+    // assert(pteBase <= 0x3FFFFFFF);
+    //
+    // flush.count = 0;
+    // endPte = pteBase + count * 4;
+    // currentPte = pteBase;
+    //
+    // while (currentPte < endPte) {
+    //     *(uint32_t*)currentPte = 0;
+    //     flush.entries[flush.count] = currentPte << 10;
+    //     flush.count++;
+    //     if (flush.count == 32) {
+    //         flush.count = 0;
+    //         KeFlushMultipleTb((void*)32, flush.entries);
+    //     }
+    //     currentPte += 4;
+    // }
+    //
+    // if (flush.count != 0) {
+    //     KeFlushMultipleTb((void*)flush.count, flush.entries);
+    // }
 }

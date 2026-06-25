@@ -5,6 +5,7 @@
 //
 
 #include "init.h"
+#include "ntstatus.h"
 #include "types.h"
 
 // IRQLs
@@ -16,7 +17,9 @@ typedef struct _KPCR {
     KIRQL m_currentIrql;
     char pad[87];
     uint32_t m_stackPtr;
-    char pad2[152];
+    char pad2[140];
+    uint32_t unk_0x100;
+    char pad3[8];
     uint8_t m_ProcessorNum;
 } KPCR;
 
@@ -50,6 +53,13 @@ void __GPRSetReg(uint32_t, uint64_t);
 #define GetGPR(x) (uint64_t)__GPRGetReg(x)
 #define SetGPR(x, y) __GPRSetReg(x, y)
 
+void __emit(uint32_t op);
+
+#define __eieio() __emit(0x7c0006ac)
+
+uint64_t __mftb();
+#define mftb32() ((uint32_t)__mftb());
+
 unsigned int __getr13();
 void __setr13(uint64_t);
 #define GetR13() __getr13()
@@ -61,3 +71,12 @@ void __setr13(uint64_t);
     if (!(expr)) {                                                                                           \
         __asm {twi 31, r0, 0x19}                                                                                \
     }
+
+void* memcpy(void* dst, const void* src, size_t n);
+void* memset(void* dst, int c, size_t n);
+int memcmp(const void* a, const void* b, size_t n);
+
+char* strcpy(char* dst, const char* src);
+char* strcat(char* dst, const char* src);
+int strcmp(const char* a, const char* b);
+size_t strlen(const char* s);
