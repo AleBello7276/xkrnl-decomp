@@ -56,6 +56,7 @@ void __GPRSetReg(uint32_t, uint64_t);
 void __emit(uint32_t op);
 
 #define __eieio() __emit(0x7c0006ac)
+#define __sync() __emit(0x7C0004AC)
 
 uint64_t __mftb();
 #define mftb32() ((uint32_t)__mftb());
@@ -66,6 +67,28 @@ void __setr13(uint64_t);
 #define SetR13(x) __setr13(x)
 
 #define GetKPCR ((KPCR*)GetR13())
+
+typedef struct _LIST_ENTRY {
+    struct _LIST_ENTRY* Flink;
+    struct _LIST_ENTRY* Blink;
+} LIST_ENTRY, *PLIST_ENTRY;
+
+struct _KDPC;
+
+typedef void (*PKDEFERRED_ROUTINE)(struct _KDPC* Dpc, void* DeferredContext, void* SystemArgument1,
+                                   void* SystemArgument2);
+
+typedef struct _KDPC {
+    CSHORT Type;
+    uint8_t Number;
+    uint8_t Importance;
+    LIST_ENTRY DpcListEntry;
+    PKDEFERRED_ROUTINE DeferredRoutine;
+    void* DeferredContext;
+    void* SystemArgument1;
+    void* SystemArgument2;
+    PULONG_PTR Lock;
+} KDPC, *PKDPC;
 
 #define assert(expr)                                                                                         \
     if (!(expr)) {                                                                                           \

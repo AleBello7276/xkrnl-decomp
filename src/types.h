@@ -30,3 +30,7 @@ typedef uint32_t size_t;
 
 typedef void VOID;
 typedef VOID* PVOID;
+
+typedef short CSHORT;
+typedef uint64_t ULONG_PTR;
+typedef ULONG_PTR* PULONG_PTR;

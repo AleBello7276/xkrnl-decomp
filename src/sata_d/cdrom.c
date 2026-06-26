@@ -2,6 +2,13 @@
 #include "krnl.h"
 #include "types.h"
 
+extern void* SataCdRomDriverObject;
+
+uint32_t SataCdRomSscHandler(SATA_CDROM_CHANNEL_EXTENSION* ext);
+void SataCdRomIssueAtapiRequest(void* cdb, void* buffer, int32_t length, int32_t flag,
+                                SATA_COMPLETION_ROUTINE callback);
+void SataCdRomFinishGenericWithOverrun(void* irp, int32_t status, void* info);
+
 static uint8_t SataCdRomHCDFRuntimePatchData_HCDF[0x14] = {
     0x2C, 0, 0x9A, 6, 0x6D, 0xE9, 0xAF, 4, 0x72, 0x48, 0xBD, 0x14, 0xC3, 0xB5, 0, 0, 0x1E, 0xC, 0, 0,
 };
@@ -35,9 +42,20 @@ static int32_t SataCdRomSscDisabled = 0;
 static int32_t SataCdRomSscTotalReadErrors = 0;
 static int32_t SataCdRomAuthenticationDisabled = 0;
 
-static uint8_t SataCdRomVendorPLDS[8] = {'P', 'L', 'D', 'S', ' ', ' ', ' ', ' '};
-static uint8_t SataCdRomRevisionPLDS7485[4] = {'7', '4', '8', '5'};
-static uint8_t SataCdRomRevisionPLDS8385[4] = {'8', '3', '8', '5'};
+//
+// vendor / revision magics stuff
+//
+static const uint8_t SataCdRomVendorHLDS[8] = "HL-DT-ST";
+static const uint8_t SataCdRomVendorSATA[8] = "SATA    ";
+static const uint8_t SataCdRomVendorPBDS[8] = "PBDS    ";
+static const uint8_t SataCdRomVendorPLDS[8] = "PLDS    ";
+static const uint8_t SataCdRomProductHLDS1[16] = "DVD-ROM GDR3120L";
+static const uint8_t SataCdRomProductHLDS2[16] = "DVD-ROM DL10N   ";
+static const uint8_t SataCdRomRevisionHLDS0078[4] = "0078";
+static const uint8_t SataCdRomRevisionHLDS0079[4] = "0079";
+static const uint8_t SataCdRomRevisionHLDS0500[4] = "0500";
+static const uint8_t SataCdRomRevisionPLDS7485[4] = "7485";
+static const uint8_t SataCdRomRevisionPLDS8385[4] = "8385";
 
 bool SataCdRomPollResetComplete() {
     uint8_t status;
@@ -177,8 +195,6 @@ NTSTATUS SataCdRomAP21Initialize(SataCdRomAP21Device* dev) {
 void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2) {
     if (arg2->notificationClass != 0x83)
         return;
-    if (arg2->notificationType < 0x60)
-        return;
 
     switch (arg2->notificationType) {
     case 0x60:
@@ -197,4 +213,149 @@ void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2) {
     default:
         return;
     }
+}
+
+void SataCdRomStartIo(void* deviceObject, void* irp) {
+    SATA_CDROM_CHANNEL_EXTENSION* ext = &SataCdRomChannelExtension;
+    void* curIrp = ext->currentIrp;
+
+    if (irp == curIrp) {
+        __sync();
+        ext->unk_0xD1 = 1;
+        return;
+    }
+
+    if (!HalIsExecutingPowerDownDpc() && !(XboxHardwareInfo.m_something & 0x4000)) {
+        ext->unk_0xAA = 0;
+        ext->unk_0xAB = 4;
+        SataCdRomDispatchIo(ext, irp);
+        return;
+    }
+
+    SataChannelAbortCurrentPacket(ext);
+}
+
+// function-specific structs for SataCdRomRestrictedDeviceControl
+// offsets inferred from the matching function; not yet confirmed shared
+typedef struct RdcSrb {
+    /* +0x00 */ uint8_t unk_0x00[0x03];
+    /* +0x03 */ uint8_t flags;
+    /* +0x04 */ uint8_t unk_0x04[0x10 - 0x04];
+    /* +0x10 */ uint32_t functionCode;
+} RdcSrb;
+
+typedef struct RdcIrp {
+    /* +0x00 */ uint8_t unk_0x00[0x10];
+    /* +0x10 */ NTSTATUS ioStatus;
+    /* +0x14 */ uint8_t unk_0x14[0x50 - 0x14];
+    /* +0x50 */ RdcSrb* srb;
+} RdcIrp;
+
+typedef struct RdcDeviceObject {
+    /* +0x00 */ uint8_t unk_0x00[0x08];
+    /* +0x08 */ void* driverObject;
+    /* +0x0C */ uint8_t unk_0x0C[0x14 - 0x0C];
+    /* +0x14 */ uint32_t flags;
+} RdcDeviceObject;
+
+// HACK: it matches but i have to use a label ugh, otherwise it loads STATUS_PENDING into r3 insetad of r31
+// etc
+NTSTATUS SataCdRomRestrictedDeviceControl(RdcDeviceObject* deviceObject, RdcIrp* irp) {
+    const uint32_t IDK1 = 0x240DC;
+    const uint32_t IDK2 = 0x4D028;
+
+    NTSTATUS status;
+
+    if (irp->srb->functionCode != IDK1) {
+        uint32_t diff = irp->srb->functionCode - IDK2;
+        if (diff == 0 || diff == 4) {
+            irp->srb->flags |= 1;
+            SataChannelStartPacket(&SataCdRomChannelExtension, irp);
+            status = STATUS_PENDING;
+            goto done;
+        }
+        status = STATUS_INVALID_DEVICE_REQUEST;
+    } else {
+        deviceObject->driverObject = &SataCdRomDriverObject;
+        deviceObject->flags &= ~1;
+        SataCdRomInitializeContinue(deviceObject);
+        status = STATUS_SUCCESS;
+    }
+
+    irp->ioStatus = status;
+    IoCompleteRequest(irp, 0);
+
+done:  // uff
+    return status;
+}
+
+// function-specific structs for SataCdRomStartReadTOC
+typedef struct SrtSrb {
+    /* +0x00 */ uint8_t unk_0x00[0x04];
+    /* +0x04 */ uint32_t allocationLength;
+    /* +0x08 */ uint8_t unk_0x08[0x10 - 0x08];
+    /* +0x10 */ uint32_t functionCode;
+} SrtSrb;
+
+typedef struct SrtIrp {
+    /* +0x00 */ uint8_t unk_0x00[0x14];
+    /* +0x14 */ uint32_t storedLength;
+    /* +0x18 */ uint8_t unk_0x18[0x1c - 0x18];
+    /* +0x1c */ void* buffer;
+    /* +0x20 */ uint8_t unk_0x20[0x50 - 0x20];
+    /* +0x50 */ SrtSrb* srb;
+} SrtIrp;
+void SataCdRomStartReadTOC(SATA_CDROM_CHANNEL_EXTENSION* ext, void* irpPtr) {
+    SrtIrp* irp = (SrtIrp*)irpPtr;
+    SrtSrb* srb;
+    uint32_t allocationLength;
+    uint32_t funcCode;
+    union {
+        uint64_t qw[2];
+        uint8_t bytes[16];
+    } cdb;
+
+    if (SataCdRomSscPending) {
+        if (SataCdRomSscHandler(ext) != 0)
+            return;
+    }
+
+    srb = irp->srb;
+    allocationLength = srb->allocationLength;
+
+    if (allocationLength == 0 || (allocationLength & 1) || ((uint32_t)irp->buffer & 1)) {
+        SataChannelInvalidParameterRequest(ext, irp);
+        return;
+    }
+
+    if (allocationLength > 0x324)
+        allocationLength = 0x324;
+
+    irp->storedLength = allocationLength;
+
+    funcCode = srb->functionCode;
+    cdb.qw[0] = 0;
+    cdb.qw[1] = 0;
+    cdb.bytes[0] = 0x43;
+    cdb.bytes[8] = (uint8_t)(uint16_t)allocationLength;
+    cdb.bytes[7] = (uint8_t)((uint16_t)allocationLength >> 8);
+
+    if (funcCode == 0x24002) {
+        cdb.bytes[1] |= 0x02;
+    } else {
+        cdb.bytes[9] = (cdb.bytes[9] & 0x3F) | 0x40;
+    }
+
+    SataCdRomIssueAtapiRequest(cdb.bytes, irp->buffer, allocationLength, 0,
+                               SataCdRomFinishGenericWithOverrun);
+}
+
+void SataCdRomStandby(void) {
+    KIRQL* oldIrql;
+
+    assert(XboxHardwareInfo.m_something & 0x2000);
+
+    oldIrql = KeRaiseIrqlToDpcLevel();
+    SataCdRomIssueImmediateCommand(&SataCdRomChannelExtension, 0xE0);
+    KfLowerIrql(oldIrql);
 }
