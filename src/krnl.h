@@ -8,6 +8,8 @@
 #include "ntstatus.h"
 #include "types.h"
 
+typedef uint32_t KSPIN_LOCK;  // Kernel Spin Lock
+
 // IRQLs
 typedef uint8_t KIRQL;
 #define IRQL_HIGH_LEVEL 0x7c
@@ -79,7 +81,7 @@ typedef void (*PKDEFERRED_ROUTINE)(struct _KDPC* Dpc, void* DeferredContext, voi
                                    void* SystemArgument2);
 
 typedef struct _KDPC {
-    CSHORT Type;
+    SHORT Type;
     uint8_t Number;
     uint8_t Importance;
     LIST_ENTRY DpcListEntry;
