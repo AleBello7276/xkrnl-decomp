@@ -48,7 +48,7 @@ void KdLogDbgPrint(STRING* str) {
 }
 
 void KdNotifyQuiesce(uint32_t notification) {
-    if ((XboxHardwareInfo.m_something & 0x80) && KdNetIsEnabled()) {
+    if ((XboxHardwareInfo.Flags & 0x80) && KdNetIsEnabled()) {
         KIRQL* old = KfRaiseIrql(IRQL_HIGH_LEVEL);
         KdpNetQuiesce(notification);
         KfLowerIrql(old);

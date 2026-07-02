@@ -6,6 +6,8 @@
 #include "odd.h"
 #include "sata.h"
 
+extern void SataDiskTransferInterrupt(void);
+
 extern bool SataCdRomSscInitialized;
 
 extern int32_t ExpUpdateModule;
@@ -45,12 +47,40 @@ typedef struct SATA_CDROM_CHANNEL_EXTENSION {
     void* currentIrp;
     char padD1[0xD1 - 0xB0];
     uint8_t unk_0xD1;
-} SATA_CDROM_CHANNEL_EXTENSION;
+} SataChannel;
 
-extern SATA_CDROM_CHANNEL_EXTENSION SataCdRomChannelExtension;
+// function-specific struct for SataCdRomAP21Initialize
+typedef struct _SataCdRomAP21CmdBuf {
+    /* +0x00 */ uint8_t unk_0x00[8];
+    /* +0x08 */ uint32_t unk_0x08;
+    /* +0x0C */ uint32_t unk_0x0C;
+} SataCdRomAP21CmdBuf;
 
-// function-specific struct (defined in cdrom.c), not yet confirmed shared
-struct RdcIrp;
+typedef struct _SataTransferDescriptor {
+    /* +0x00 */ uint8_t unk_0x00[3];
+    /* +0x03 */ uint8_t flags;
+    /* +0x04 */ uint32_t byteCount;
+    /* +0x08 */ void* unk_0x08;
+    /* +0x0c */ uint32_t unk_0x0c;
+    /* +0x10 */ uint32_t deviceFlags;
+} SataTransferDescriptor;
+
+typedef struct _SataRequest {
+    /* +0x00 */ uint8_t unk_0x00[0x10];
+    /* +0x10 */ NTSTATUS lastStatus;
+    /* +0x14 */ uint32_t transferLength;
+    /* +0x18 */ uint8_t unk_0x18[4];
+    /* +0x1c */ SataCdRomAP21CmdBuf* unk_0x1C;
+    /* +0x20 */ uint8_t unk_0x20[0x50 - 0x20];
+    /* +0x50 */ SataTransferDescriptor* pTransferDesc;
+} SataRequest;
+
+typedef struct SATA_SMC_NOTIFICATION {
+    uint8_t notificationClass;
+    uint8_t notificationType;
+} SATA_SMC_NOTIFICATION;
+
+extern SataChannel SataCdRomChannelExtension;
 
 // function-specific struct (defined in cdrom.c), not yet confirmed shared
 struct RdcDeviceObject;
@@ -63,15 +93,12 @@ void KeReleaseSpinLockFromRaisedIrql(uint32_t* spinlock);
 void KfLowerIrql(KIRQL* irql);
 int32_t SataChannelResetDevice(void* deviceExt, void* pollFunc);
 void SataChannelSetTimerPeriod(void* channelExt, uint32_t period);
-int32_t SataChannelPrepareBufferTransfer(SATA_CDROM_CHANNEL_EXTENSION* ext, void* buffer, int32_t length);
-void SataChannelCopyDoubleBuffer(SATA_CDROM_CHANNEL_EXTENSION* ext, void* buffer, int32_t length,
-                                 int32_t flag);
-int32_t SataChannelStartPacket(SATA_CDROM_CHANNEL_EXTENSION* ext, struct RdcIrp* irp);
-void IoCompleteRequest(struct RdcIrp* irp, int32_t priority);
+int32_t SataChannelPrepareBufferTransfer(SataChannel* ext, void* buffer, int32_t length);
+void SataChannelCopyDoubleBuffer(SataChannel* ext, void* buffer, int32_t length, int32_t flag);
+int32_t SataChannelStartPacket(SataChannel* ext, SataRequest* pRequest);
+void IoCompleteRequest(SataRequest* pRequest, int32_t priority);
 int32_t IoSynchronousDeviceIoControlRequest(uint32_t ioctl, void* deviceExt, void* inBuf, int32_t inLen,
                                             void* outBuf, int32_t outLen, int32_t* retLen);
-
-extern void SataDiskTransferInterrupt(void);
 
 void SataCdRomInitialize();
 void SataCdRomInitializeContinue(struct RdcDeviceObject* deviceObject);
@@ -92,27 +119,23 @@ void SataCdRomRecordIncrementStatistic(int32_t arg0);
 
 void SataCdRomClearAuthenticationStateInternal(uint16_t* arg0);
 
-typedef struct SATA_SMC_NOTIFICATION {
-    uint8_t notificationClass;
-    uint8_t notificationType;
-} SATA_SMC_NOTIFICATION;
-
 void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2);
 
-NTSTATUS SataCdRomRestrictedDeviceControl(struct RdcDeviceObject* deviceObject, struct RdcIrp* irp);
+NTSTATUS SataCdRomRestrictedDeviceControl(struct RdcDeviceObject* deviceObject, SataRequest* pRequest);
 void SataCdRomStartIo(void* deviceObject, void* irp);
-void SataCdRomDispatchIo(SATA_CDROM_CHANNEL_EXTENSION* ext, void* irp);
-void SataChannelAbortCurrentPacket(SATA_CDROM_CHANNEL_EXTENSION* ext);
+void SataCdRomDispatchIo(SataChannel* ext, void* irp);
+void SataChannelAbortCurrentPacket(SataChannel* ext);
 bool HalIsExecutingPowerDownDpc(void);
 
-// function-specific struct (defined in cdrom.c), not yet confirmed shared
-struct SataCdRomAP21Device;
+void SataCdRomIssueImmediateCommand(SataChannel* ext, uint8_t command);
+void SataCdRomStandby();
+KIRQL* KeRaiseIrqlToDpcLevel();
 
-void SataCdRomIssueImmediateCommand(SATA_CDROM_CHANNEL_EXTENSION* ext, uint8_t command);
-void SataCdRomStandby(void);
-KIRQL* KeRaiseIrqlToDpcLevel(void);
-
-NTSTATUS SataCdRomAP21Initialize(struct SataCdRomAP21Device* dev);
+NTSTATUS SataCdRomAP21Initialize(SataRequest* pRequest);
 
 void SataChannelInvalidParameterRequest(void* ext, void* irp);
-void SataCdRomStartReadTOC(SATA_CDROM_CHANNEL_EXTENSION* ext, void* irp);
+void SataCdRomStartReadTOC(SataChannel* pChannel, SataRequest* pRequest);
+
+bool SataCdRomSscOnReadError(SataRequest* pRequest);
+
+bool SataCdRomIsReadRequest(SataTransferDescriptor* pDesc, bool);

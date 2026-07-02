@@ -4,7 +4,7 @@
 
 extern void* SataCdRomDriverObject;
 
-uint32_t SataCdRomSscHandler(SATA_CDROM_CHANNEL_EXTENSION* ext);
+uint32_t SataCdRomSscHandler(SataChannel* ext);
 void SataCdRomIssueAtapiRequest(void* cdb, void* buffer, int32_t length, int32_t flag,
                                 SATA_COMPLETION_ROUTINE callback);
 void SataCdRomFinishGenericWithOverrun(void* irp, int32_t status, void* info);
@@ -22,25 +22,36 @@ static int32_t SataCdRomHLDSSpecialModeSelect[4] = {0x6484C, 0, 0x6484C, 0};
 
 static bool SataCdRomSscDiscReady = true;
 static bool SataCdRomSscPending = true;
-static int32_t SataCdRomX360Media = 0;
-static int32_t SataCdRomEmulatorPresent = 0;
-static int32_t SataCdRomDoUninterruptableReads = 0;
-static int32_t SataCdRomSscCurrentSpeed = 0;
-static int32_t SataCdRomSscMaximumSpeed = 0;
-static int32_t SataCdRomSscFastestSpeed = 0;
-static int32_t SataCdRomSscDesiredSpeed = 0;
-static int32_t SataCdRomSscRetryCount = 0;
-static int32_t SataCdRomSscReadErrors = 0;
-static int32_t SataCdRomSscReadCount = 0;
-static int32_t SataCdRomSscTimeStamp = 0;
 
 #pragma data_seg(".data")
-static bool SataCdRomSscInitialized = false;
+extern int32_t SataCdRomX360Media;
+extern int32_t SataCdRomEmulatorPresent;
+extern int32_t SataCdRomDoUninterruptableReads;
+extern int32_t SataCdRomSscCurrentSpeed;
+extern uint32_t SataCdRomSscMaximumSpeed;
+extern uint32_t SataCdRomSscFastestSpeed;
+extern int32_t SataCdRomSscDesiredSpeed;
+extern uint32_t SataCdRomSscRetryCount;
+extern uint32_t SataCdRomSscReadErrors;
+extern int32_t SataCdRomSscReadCount;
+extern int32_t SataCdRomSscTimeStamp;
+
+extern bool SataCdRomSscInitialized;
+
+extern uint32_t SataCdRomSscDisabled;
+extern uint32_t SataCdRomSscTotalReadErrors;
+extern uint32_t SataCdRomAuthenticationDisabled;
 #pragma data_seg()
 
-static int32_t SataCdRomSscDisabled = 0;
-static int32_t SataCdRomSscTotalReadErrors = 0;
-static int32_t SataCdRomAuthenticationDisabled = 0;
+// https://github.com/xenia-canary/xenia-canary/blob/canary_experimental/src/xenia/kernel/kernel_state.h#L98
+struct TimeStampBundle {
+    uint64_t interrupt_time;
+    uint64_t system_time;
+    uint32_t tick_count;
+    uint32_t padding;
+};
+
+extern struct TimeStampBundle KeTimeStampBundle;
 
 //
 // vendor / revision magics stuff
@@ -140,52 +151,27 @@ NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size) {
     return STATUS_SUCCESS;
 }
 
-// function-specific struct for SataCdRomAP21Initialize
-// offsets inferred from the matching function; not yet confirmed shared
-typedef struct SataCdRomAP21PacketDesc {
-    /* +0x00 */ uint8_t unk_0x00[3];
-    /* +0x03 */ uint8_t unk_0x03;
-    /* +0x04 */ uint32_t unk_0x04;
-    /* +0x08 */ void* unk_0x08;
-    /* +0x0C */ uint32_t unk_0x0C;
-} SataCdRomAP21PacketDesc;
-
-// function-specific struct for SataCdRomAP21Initialize
-typedef struct SataCdRomAP21CmdBuf {
-    /* +0x00 */ uint8_t unk_0x00[8];
-    /* +0x08 */ uint32_t unk_0x08;
-    /* +0x0C */ uint32_t unk_0x0C;
-} SataCdRomAP21CmdBuf;
-
-// function-specific struct for SataCdRomAP21Initialize
-typedef struct SataCdRomAP21Device {
-    /* +0x00 */ uint8_t unk_0x00[0x1C];
-    /* +0x1C */ SataCdRomAP21CmdBuf* unk_0x1C;
-    /* +0x20 */ uint8_t unk_0x20[0x30];
-    /* +0x50 */ SataCdRomAP21PacketDesc* unk_0x50;
-} SataCdRomAP21Device;
-
-NTSTATUS SataCdRomAP21Initialize(SataCdRomAP21Device* dev) {
+NTSTATUS SataCdRomAP21Initialize(SataRequest* pRequest) {
     const uint32_t SIZE_16 = 0x10;
     SataCdRomAP21CmdBuf* cmdBuf;
 
     assert(GetKPCR->m_currentIrql < 2);
 
-    if (dev->unk_0x50->unk_0x0C != SIZE_16)
+    if (pRequest->pTransferDesc->unk_0x0c != SIZE_16)
         return STATUS_INVALID_PARAMETER;
 
-    if (dev->unk_0x50->unk_0x08 == nullptr)
+    if (pRequest->pTransferDesc->unk_0x08 == nullptr)
         return STATUS_INVALID_PARAMETER;
 
-    cmdBuf = dev->unk_0x1C;
-    if (dev->unk_0x50->unk_0x04 != SIZE_16)
+    cmdBuf = pRequest->unk_0x1C;
+    if (pRequest->pTransferDesc->byteCount != SIZE_16)
         return STATUS_INVALID_PARAMETER;
 
     if (cmdBuf != nullptr) {
         cmdBuf->unk_0x08 = 0;
         cmdBuf->unk_0x0C = 0;
-        dev->unk_0x50->unk_0x03 |= 1;
-        SataChannelStartPacket(&SataCdRomChannelExtension, dev);
+        pRequest->pTransferDesc->flags |= 1;
+        SataChannelStartPacket(&SataCdRomChannelExtension, pRequest);
         return STATUS_PENDING;
     }
 
@@ -216,7 +202,7 @@ void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2) {
 }
 
 void SataCdRomStartIo(void* deviceObject, void* irp) {
-    SATA_CDROM_CHANNEL_EXTENSION* ext = &SataCdRomChannelExtension;
+    SataChannel* ext = &SataCdRomChannelExtension;
     void* curIrp = ext->currentIrp;
 
     if (irp == curIrp) {
@@ -225,7 +211,7 @@ void SataCdRomStartIo(void* deviceObject, void* irp) {
         return;
     }
 
-    if (!HalIsExecutingPowerDownDpc() && !(XboxHardwareInfo.m_something & 0x4000)) {
+    if (!HalIsExecutingPowerDownDpc() && !(XboxHardwareInfo.Flags & 0x4000)) {
         ext->unk_0xAA = 0;
         ext->unk_0xAB = 4;
         SataCdRomDispatchIo(ext, irp);
@@ -234,22 +220,6 @@ void SataCdRomStartIo(void* deviceObject, void* irp) {
 
     SataChannelAbortCurrentPacket(ext);
 }
-
-// function-specific structs for SataCdRomRestrictedDeviceControl
-// offsets inferred from the matching function; not yet confirmed shared
-typedef struct RdcSrb {
-    /* +0x00 */ uint8_t unk_0x00[0x03];
-    /* +0x03 */ uint8_t flags;
-    /* +0x04 */ uint8_t unk_0x04[0x10 - 0x04];
-    /* +0x10 */ uint32_t functionCode;
-} RdcSrb;
-
-typedef struct RdcIrp {
-    /* +0x00 */ uint8_t unk_0x00[0x10];
-    /* +0x10 */ NTSTATUS ioStatus;
-    /* +0x14 */ uint8_t unk_0x14[0x50 - 0x14];
-    /* +0x50 */ RdcSrb* srb;
-} RdcIrp;
 
 typedef struct RdcDeviceObject {
     /* +0x00 */ uint8_t unk_0x00[0x08];
@@ -260,16 +230,16 @@ typedef struct RdcDeviceObject {
 
 // HACK: it matches but i have to use a label ugh, otherwise it loads STATUS_PENDING into r3 insetad of r31
 // etc
-NTSTATUS SataCdRomRestrictedDeviceControl(RdcDeviceObject* deviceObject, RdcIrp* irp) {
+NTSTATUS SataCdRomRestrictedDeviceControl(RdcDeviceObject* deviceObject, SataRequest* irp) {
     const uint32_t IDK1 = 0x240DC;
     const uint32_t IDK2 = 0x4D028;
 
     NTSTATUS status;
 
-    if (irp->srb->functionCode != IDK1) {
-        uint32_t diff = irp->srb->functionCode - IDK2;
+    if (irp->pTransferDesc->deviceFlags != IDK1) {
+        uint32_t diff = irp->pTransferDesc->deviceFlags - IDK2;
         if (diff == 0 || diff == 4) {
-            irp->srb->flags |= 1;
+            irp->pTransferDesc->flags |= 1;
             SataChannelStartPacket(&SataCdRomChannelExtension, irp);
             status = STATUS_PENDING;
             goto done;
@@ -282,80 +252,65 @@ NTSTATUS SataCdRomRestrictedDeviceControl(RdcDeviceObject* deviceObject, RdcIrp*
         status = STATUS_SUCCESS;
     }
 
-    irp->ioStatus = status;
+    irp->lastStatus = status;
     IoCompleteRequest(irp, 0);
 
 done:  // uff
     return status;
 }
 
-// function-specific structs for SataCdRomStartReadTOC
-typedef struct SrtSrb {
-    /* +0x00 */ uint8_t unk_0x00[0x04];
-    /* +0x04 */ uint32_t allocationLength;
-    /* +0x08 */ uint8_t unk_0x08[0x10 - 0x08];
-    /* +0x10 */ uint32_t functionCode;
-} SrtSrb;
-
-typedef struct SrtIrp {
-    /* +0x00 */ uint8_t unk_0x00[0x14];
-    /* +0x14 */ uint32_t storedLength;
-    /* +0x18 */ uint8_t unk_0x18[0x1c - 0x18];
-    /* +0x1c */ void* buffer;
-    /* +0x20 */ uint8_t unk_0x20[0x50 - 0x20];
-    /* +0x50 */ SrtSrb* srb;
-} SrtIrp;
-void SataCdRomStartReadTOC(SATA_CDROM_CHANNEL_EXTENSION* ext, void* irpPtr) {
-    SrtIrp* irp = (SrtIrp*)irpPtr;
-    SrtSrb* srb;
-    uint32_t allocationLength;
-    uint32_t funcCode;
-    union {
-        uint64_t qw[2];
-        uint8_t bytes[16];
-    } cdb;
-
-    if (SataCdRomSscPending) {
-        if (SataCdRomSscHandler(ext) != 0)
-            return;
-    }
-
-    srb = irp->srb;
-    allocationLength = srb->allocationLength;
-
-    if (allocationLength == 0 || (allocationLength & 1) || ((uint32_t)irp->buffer & 1)) {
-        SataChannelInvalidParameterRequest(ext, irp);
-        return;
-    }
-
-    if (allocationLength > 0x324)
-        allocationLength = 0x324;
-
-    irp->storedLength = allocationLength;
-
-    funcCode = srb->functionCode;
-    cdb.qw[0] = 0;
-    cdb.qw[1] = 0;
-    cdb.bytes[0] = 0x43;
-    cdb.bytes[8] = (uint8_t)(uint16_t)allocationLength;
-    cdb.bytes[7] = (uint8_t)((uint16_t)allocationLength >> 8);
-
-    if (funcCode == 0x24002) {
-        cdb.bytes[1] |= 0x02;
-    } else {
-        cdb.bytes[9] = (cdb.bytes[9] & 0x3F) | 0x40;
-    }
-
-    SataCdRomIssueAtapiRequest(cdb.bytes, irp->buffer, allocationLength, 0,
-                               SataCdRomFinishGenericWithOverrun);
-}
-
-void SataCdRomStandby(void) {
+void SataCdRomStandby() {
     KIRQL* oldIrql;
 
-    assert(XboxHardwareInfo.m_something & 0x2000);
+    assert(XboxHardwareInfo.Flags & 0x2000);
 
     oldIrql = KeRaiseIrqlToDpcLevel();
     SataCdRomIssueImmediateCommand(&SataCdRomChannelExtension, 0xE0);
     KfLowerIrql(oldIrql);
+}
+
+extern void SataCdRomSscFinishSpeedDecrease();
+void DbgPrint(char* format, ...);
+
+extern int DAT_80240ef0;
+
+#define SSC_MAX_ATTEMPTS 8
+#define SSC_MIN_SPEED 1
+
+bool SataCdRomSscOnReadError(SataRequest* pRequest) {
+    uint32_t speedFloor;
+
+    if (SataCdRomSscRetryCount >= SSC_MAX_ATTEMPTS && SataCdRomSscInitialized) {
+        SataCdRomSscPending = 0;
+        DbgPrint("SATA: SSC disabled.\n");
+        return false;
+    }
+
+    if (!SataCdRomIsReadRequest(pRequest->pTransferDesc, false))
+        return false;
+
+    if (SataCdRomSscReadErrors < SSC_MAX_ATTEMPTS)
+        SataCdRomSscReadErrors++;
+    SataCdRomSscTotalReadErrors++;
+    DbgPrint("SATA: SSC read errors %d %d.\n", SataCdRomSscReadErrors, SataCdRomSscTotalReadErrors);
+
+    SataCdRomSscReadCount = 0;
+    SataCdRomSscTimeStamp = KeTimeStampBundle.tick_count;
+    SataCdRomSscPending = 1;
+
+    if (SataCdRomSscReadErrors >= SSC_MAX_ATTEMPTS && SataCdRomSscMaximumSpeed == SataCdRomSscFastestSpeed
+        && SataCdRomSscMaximumSpeed > 1) {
+        SataCdRomSscMaximumSpeed--;
+        DbgPrint("SATA: SSC at %d:%d:%d.\n", SataCdRomSscCurrentSpeed, SataCdRomSscMaximumSpeed,
+                 SataCdRomSscFastestSpeed);
+    }
+
+    speedFloor = (SataCdRomSscFastestSpeed >= 3) ? SataCdRomSscFastestSpeed - 2 : SSC_MIN_SPEED;
+
+    if (SataCdRomSscCurrentSpeed > speedFloor) {
+        SataCdRomSscSetCurrentSpeed(SataCdRomSscCurrentSpeed - 1, SataCdRomSscFinishSpeedDecrease);
+        return true;
+    }
+
+    return false;
 }
