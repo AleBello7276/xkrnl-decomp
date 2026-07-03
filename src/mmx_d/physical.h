@@ -1,5 +1,5 @@
 #pragma once
-
+#include <krnl.h>
 #include <types.h>
 
 #define PAGE_4KB 0x1000

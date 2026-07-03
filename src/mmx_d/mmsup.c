@@ -1,5 +1,6 @@
 #include "mmsup.h"
 
+#include "intrinsics.h"
 #include "krnl.h"
 #include "pfnsup.h"
 

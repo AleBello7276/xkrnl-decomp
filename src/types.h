@@ -75,3 +75,15 @@ typedef char* LPSTR;
 typedef const char* LPCSTR;
 typedef short* LPWSTR;
 typedef const short* LPCWSTR;
+
+typedef union _LARGE_INTEGER {
+    struct {
+        LONG HighPart;
+        DWORD LowPart;
+    };
+    struct {
+        LONG HighPart;
+        DWORD LowPart;
+    } u;
+    LONGLONG QuadPart;
+} LARGE_INTEGER, *PLARGE_INTEGER;

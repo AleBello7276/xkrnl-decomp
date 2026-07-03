@@ -1,5 +1,5 @@
 #pragma once
-
+#include <krnl.h>
 #include <types.h>
 
 extern uint16_t MmProtectToPteProtectionMask[16];

@@ -46,37 +46,12 @@ typedef struct _MMADDRESS_NODE {
     struct _MMADDRESS_NODE* m_rightLeaf;
 } MMADDRESS_NODE;
 
-//
-// INTRINSICS, move this later!
-//
-
-void* __GPRGetReg(uint32_t);
-void __GPRSetReg(uint32_t, uint64_t);
-#define GetGPR(x) (uint64_t)__GPRGetReg(x)
-#define SetGPR(x, y) __GPRSetReg(x, y)
-
-void __emit(uint32_t op);
-
-#define __eieio() __emit(0x7c0006ac)
-#define __sync() __emit(0x7C0004AC)
-
-uint64_t __mftb();
-#define mftb32() ((uint32_t)__mftb());
-
-unsigned int __getr13();
-void __setr13(uint64_t);
-#define GetR13() __getr13()
-#define SetR13(x) __setr13(x)
-
-#define GetKPCR ((KPCR*)GetR13())
-
 typedef struct _LIST_ENTRY {
     struct _LIST_ENTRY* Flink;
     struct _LIST_ENTRY* Blink;
 } LIST_ENTRY, *PLIST_ENTRY;
 
 struct _KDPC;
-
 typedef void (*PKDEFERRED_ROUTINE)(struct _KDPC* Dpc, void* DeferredContext, void* SystemArgument1,
                                    void* SystemArgument2);
 
