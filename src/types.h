@@ -53,7 +53,7 @@ typedef signed short SHORT;
 typedef unsigned short USHORT;
 typedef unsigned short WORD;
 typedef signed int INT;
-typedef unsigned int UINT;
+typedef unsigned int UINT, UINT_PTR, *PUINT_PTR;
 typedef signed long LONG;
 typedef unsigned long ULONG;
 typedef unsigned long DWORD, *PDWORD;
