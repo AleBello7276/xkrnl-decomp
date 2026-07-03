@@ -1,5 +1,7 @@
 #pragma once
 
+#include <types.h>
+
 // https://github.com/xenon-emu/xenon/blob/main/Xenon/Core/PCI/SATA.h
 
 //
@@ -79,3 +81,52 @@
 #define ATA_COMMAND_SECURITY_SET_PASSWORD 0xF1
 #define ATA_COMMAND_SECURITY_UNLOCK 0xF2
 #define ATA_COMMAND_SECURITY_DISABLE_PASSWORD 0xF6
+
+typedef void (*SATA_COMPLETION_ROUTINE)(void* irp, int32_t status, void* info);
+
+typedef struct _SataExtension {
+    uint8_t Reserved_0x00[0x14];
+    ULONG Flags;
+} SataExtension;
+
+typedef struct _SataChannel {
+    char pad0[0x6C];
+    SataExtension* ChannelExtension;
+    char pad88[0x88 - 0x70];
+    void* bufferPtr;
+    int32_t bufferLen;
+    char pad98[0x98 - 0x90];
+    uint32_t spinlock;
+    char padA1[0xA1 - 0x9C];
+    uint8_t irql;
+    char padA4[0xA4 - 0xA2];
+    uint32_t kPcrField;
+    uint8_t flags;
+    uint8_t retryCount;
+    uint8_t unk_0xAA;
+    uint8_t unk_0xAB;
+    void* currentIrp;
+    char padD1[0xD1 - 0xB0];
+    uint8_t unk_0xD1;
+} SataChannel;
+
+extern SataChannel SataCdRomChannelExtension;
+
+#pragma section("CLRDATAA", read, write)
+extern ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[0x800];
+
+extern int32_t SataCdRomX360Media;
+extern int32_t SataCdRomEmulatorPresent;
+extern int32_t SataCdRomDoUninterruptableReads;
+extern int32_t SataCdRomSscCurrentSpeed;
+extern uint32_t SataCdRomSscMaximumSpeed;
+extern uint32_t SataCdRomSscFastestSpeed;
+extern int32_t SataCdRomSscDesiredSpeed;
+extern uint32_t SataCdRomSscRetryCount;
+extern uint32_t SataCdRomSscReadErrors;
+extern int32_t SataCdRomSscReadCount;
+extern int32_t SataCdRomSscTimeStamp;
+extern bool SataCdRomSscInitialized;
+extern uint32_t SataCdRomSscDisabled;
+extern uint32_t SataCdRomSscTotalReadErrors;
+extern uint64_t SataCdRomAuthenticationDisabled;

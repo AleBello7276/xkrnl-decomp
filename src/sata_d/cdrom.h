@@ -20,35 +20,6 @@ extern int16_t SataCdRomSenseData;
 extern int32_t SataCdRomStaticTransferBuffer;
 extern uint8_t* SataCdRomXGD2LastDiscAuthTotalTime;
 
-typedef void (*SATA_COMPLETION_ROUTINE)(void* irp, int32_t status, void* info);
-
-typedef struct SATA_CDROM_CHANNEL_EXTENSION {
-    char pad0[0x4];
-    void (*restartCallback)(void*);
-    void (*interruptHandler)();
-    SATA_COMPLETION_ROUTINE completionRoutine;
-    char pad14[0x14 - 0x10];
-    void (*restartFunc)(void*);
-    char pad6C[0x6C - 0x18];
-    void* deviceExt;
-    char pad88[0x88 - 0x70];
-    void* bufferPtr;
-    int32_t bufferLen;
-    char pad98[0x98 - 0x90];
-    uint32_t spinlock;
-    char padA1[0xA1 - 0x9C];
-    uint8_t irql;
-    char padA4[0xA4 - 0xA2];
-    uint32_t kPcrField;
-    uint8_t flags;
-    uint8_t retryCount;
-    uint8_t unk_0xAA;
-    uint8_t unk_0xAB;
-    void* currentIrp;
-    char padD1[0xD1 - 0xB0];
-    uint8_t unk_0xD1;
-} SataChannel;
-
 // function-specific struct for SataCdRomAP21Initialize
 typedef struct _SataCdRomAP21CmdBuf {
     /* +0x00 */ uint8_t unk_0x00[8];
@@ -79,8 +50,6 @@ typedef struct SATA_SMC_NOTIFICATION {
     uint8_t notificationClass;
     uint8_t notificationType;
 } SATA_SMC_NOTIFICATION;
-
-extern SataChannel SataCdRomChannelExtension;
 
 // function-specific struct (defined in cdrom.c), not yet confirmed shared
 struct RdcDeviceObject;
@@ -139,3 +108,5 @@ void SataCdRomStartReadTOC(SataChannel* pChannel, SataRequest* pRequest);
 bool SataCdRomSscOnReadError(SataRequest* pRequest);
 
 bool SataCdRomIsReadRequest(SataTransferDescriptor* pDesc, bool);
+
+void SataCdRomSscSetCurrentSpeed(int, void*);

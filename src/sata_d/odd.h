@@ -1,4 +1,5 @@
 #pragma once
+#include "intrinsics.h"
 #include "types.h"
 
 #define ODD_ADDR 0x7FEA1200

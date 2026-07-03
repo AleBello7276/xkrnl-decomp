@@ -4,44 +4,26 @@
 
 extern void* SataCdRomDriverObject;
 
-uint32_t SataCdRomSscHandler(SataChannel* ext);
-void SataCdRomIssueAtapiRequest(void* cdb, void* buffer, int32_t length, int32_t flag,
-                                SATA_COMPLETION_ROUTINE callback);
-void SataCdRomFinishGenericWithOverrun(void* irp, int32_t status, void* info);
+bool SataCdRomSscDiscReady = true;
+bool SataCdRomSscPending = true;
 
-static uint8_t SataCdRomHCDFRuntimePatchData_HCDF[0x14] = {
-    0x2C, 0, 0x9A, 6, 0x6D, 0xE9, 0xAF, 4, 0x72, 0x48, 0xBD, 0x14, 0xC3, 0xB5, 0, 0, 0x1E, 0xC, 0, 0,
-};
+int32_t SataCdRomX360Media = 0;
+int32_t SataCdRomEmulatorPresent = 0;
+int32_t SataCdRomDoUninterruptableReads = 0;
+int32_t SataCdRomSscCurrentSpeed = 0;
+uint32_t SataCdRomSscMaximumSpeed = 0;
+uint32_t SataCdRomSscFastestSpeed = 0;
+int32_t SataCdRomSscDesiredSpeed = 0;
+uint32_t SataCdRomSscRetryCount = 0;
+uint32_t SataCdRomSscReadErrors = 0;
+int32_t SataCdRomSscReadCount = 0;
+int32_t SataCdRomSscTimeStamp = 0;
+bool SataCdRomSscInitialized = 0;
+uint32_t SataCdRomSscDisabled = 0;
+uint32_t SataCdRomSscTotalReadErrors = 0;
+uint64_t SataCdRomAuthenticationDisabled = 0;
 
-static uint8_t SataCdRomHCDFRuntimePatchData_XGD2[0x14] = {
-    0x1E, 0x2B, 0xE, 7, 0x16, 0x93, 0x38, 5, 0xE7, 0x3B, 0x2A, 0x16, 0x71, 0xBD, 0, 0, 0xA1, 0xC, 0, 0,
-};
-
-static int32_t SataCdromLayer1StartingSector = -1;
-static int32_t SataCdRomHLDSSpecialModeSelect[4] = {0x6484C, 0, 0x6484C, 0};
-
-static bool SataCdRomSscDiscReady = true;
-static bool SataCdRomSscPending = true;
-
-#pragma data_seg(".data")
-extern int32_t SataCdRomX360Media;
-extern int32_t SataCdRomEmulatorPresent;
-extern int32_t SataCdRomDoUninterruptableReads;
-extern int32_t SataCdRomSscCurrentSpeed;
-extern uint32_t SataCdRomSscMaximumSpeed;
-extern uint32_t SataCdRomSscFastestSpeed;
-extern int32_t SataCdRomSscDesiredSpeed;
-extern uint32_t SataCdRomSscRetryCount;
-extern uint32_t SataCdRomSscReadErrors;
-extern int32_t SataCdRomSscReadCount;
-extern int32_t SataCdRomSscTimeStamp;
-
-extern bool SataCdRomSscInitialized;
-
-extern uint32_t SataCdRomSscDisabled;
-extern uint32_t SataCdRomSscTotalReadErrors;
-extern uint32_t SataCdRomAuthenticationDisabled;
-#pragma data_seg()
+ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[2048];
 
 // https://github.com/xenia-canary/xenia-canary/blob/canary_experimental/src/xenia/kernel/kernel_state.h#L98
 struct TimeStampBundle {
@@ -138,6 +120,8 @@ bool SataCdRomWritePacket(uint32_t* pkt) {
     return true;
 }
 
+// HACK, so it doesnt inline memcpy, need a deeper look at this
+#pragma function(memcpy)
 NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size) {
     const uint32_t SENSE_DATA_SIZE = 18;
 
