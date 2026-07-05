@@ -1,6 +1,7 @@
 #include "virtual.h"
 
 #include "krnl.h"
+
 void MiReorderTree(MMADDRESS_NODE* node, MMADDRESS_NODE** rootVad) {
     MMADDRESS_NODE* p_Var1;
     MMADDRESS_NODE* parent;
@@ -143,6 +144,7 @@ void MiReorderTree(MMADDRESS_NODE* node, MMADDRESS_NODE** rootVad) {
     }
     return;
 }
+
 MMVAD_TREE* MiGetVadTreeFromBaseAddress(KPROCESS* process, uint32_t baseAddr, uint32_t size) {
     MMVAD_TREE* tree;
 

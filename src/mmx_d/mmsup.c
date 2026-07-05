@@ -101,7 +101,7 @@ int MiMakePhysicalProtectionMask(uint32_t protect, uint32_t* output) {
 bool MmIsDevkitMemoryPresent() {
     return MmDevkitMemoryPresent;
 }
-
+/*
 bool MmIsAddressValid(uint32_t address) {
     uint32_t pte;
     uint8_t* r3;
@@ -160,6 +160,7 @@ invalid:
 normalize:
     return result ? 1 : 0;
 }
+    */
 
 uint32_t MmQueryMemoryRegionType(uint32_t address) {
     if (address + 0x6E000000U <= 0xDFEFFFF)
@@ -245,48 +246,6 @@ uint32_t MmResetLowestAvailablePages(uint32_t* titleSmallOld, uint32_t* systemSm
     return 0;
 }
 
-void MiQueryStatistics(uint32_t* out) {
-    uint32_t structSize;
-
-    assert(GetKPCR->m_currentIrql == 2);
-
-    structSize = out[0];
-
-    out[1] = MmNumberOfPhysicalPages;
-    out[2] = MmAllocatedPagesByUsage[0];
-    out[3] = MmTitlePfnRegion.m_unk0x48;
-    out[4] = 0x2FFE0000;
-    out[5] = MmTitlePfnRegion.m_unk0xb4 + MmTitlePfnRegion.m_unk0x98 + MmTitlePfnRegion.m_unk0x7c;
-    out[6] = MmAllocatedPagesByUsage[1];
-    out[7] = MmAllocatedPagesByUsage[9];
-    out[8] = MmAllocatedPagesByUsage[8];
-    out[9] = MmAllocatedPagesByUsage[6];
-    out[10] = MmAllocatedPagesByUsage[7];
-    out[11] = MmAllocatedPagesByUsage[5];
-    out[12] = MmAllocatedPagesByUsage[3] + MmAllocatedPagesByUsage[4];
-    out[13] = MmAllocatedPagesByUsage[2];
-
-    out[14] = MmSystemPfnRegion.m_unk0x48;
-    out[15] = 0x01FF0000;
-    out[16] = MmSystemPfnRegion.m_unk0xb4 + MmSystemPfnRegion.m_unk0x98 + MmSystemPfnRegion.m_unk0x7c;
-    out[17] = MmAllocatedPagesByUsage[10];
-    out[18] = MmAllocatedPagesByUsage[18];
-    out[19] = MmAllocatedPagesByUsage[17];
-    out[20] = MmAllocatedPagesByUsage[15];
-    out[21] = MmAllocatedPagesByUsage[16];
-    out[22] = MmAllocatedPagesByUsage[14];
-    out[23] = MmAllocatedPagesByUsage[13] + MmAllocatedPagesByUsage[12];
-    out[24] = MmAllocatedPagesByUsage[11];
-
-    out[25] = MmHighestPhysicalPage;
-
-    if (structSize < 0x70)
-        return;
-
-    out[26] = MmTitlePfnRegion.m_unk0xf4;
-    out[27] = MmSystemPfnRegion.m_unk0xf4;
-}
-
 uint32_t MmQueryStatistics(uint32_t* buf) {
     if (buf[0] < 0x68)
         return 0xC000000D;
@@ -305,118 +264,4 @@ uint32_t MmQueryStatistics(uint32_t* buf) {
     }
 
     return 0;
-}
-
-uint32_t MmQueryDevkitStatistics(uint32_t* buf) {
-    uint32_t* out = buf;
-
-    if (out[0] < 0x98)
-        goto error;
-
-    {
-        uint32_t* field4 = out + 1;
-        if (*field4 != 0x70)
-            goto error;
-
-        {
-            KIRQL irql = KfAcquireSpinLock(&MmGlobalLock);
-            MiQueryStatistics(field4);
-            KfReleaseSpinLock(&MmGlobalLock, irql);
-        }
-
-        out[0x74 / 4] = MmTitlePfnRegion.m_unk0x104;
-        out[0x78 / 4] = MmNumberOfTitleDebugPages;
-        out[0x7c / 4] = MmSystemPfnRegion.m_unk0x104;
-        out[0x80 / 4] = MmNumberOfSystemDebugPages;
-
-        out[0x88 / 4] = MmTitlePfnRegion.m_unk0xf0 - MmTitlePfnRegion.m_unk0xec + 1;
-
-        if (MmTitlePfnRegion.m_unk0xfc != 0 && MmTitlePfnRegion.m_unk0x100 != 0) {
-            out[0x8c / 4] = MmTitlePfnRegion.m_unk0x100 - MmTitlePfnRegion.m_unk0xfc + 1;
-        } else {
-            out[0x8c / 4] = 0;
-        }
-
-        out[0x90 / 4] = MmSystemPfnRegion.m_unk0xf0 - MmSystemPfnRegion.m_unk0xec + 1;
-
-        if (MmSystemPfnRegion.m_unk0xfc != 0 && MmSystemPfnRegion.m_unk0x100 != 0) {
-            out[0x94 / 4] = MmSystemPfnRegion.m_unk0x100 - MmSystemPfnRegion.m_unk0xfc + 1;
-        } else {
-            out[0x94 / 4] = 0;
-        }
-
-        out[0x84 / 4] = 0x20000;
-        out[0] = 0x98;
-
-        return 0;
-    }
-
-error:
-    return 0xC000000D;
-}
-
-void MmSetFsCacheElementIndex(uint32_t address, uint32_t index) {
-    KSPIN_LOCK* lock = &MmGlobalLock;
-    KIRQL irql = KfAcquireSpinLock(lock);
-
-    {
-        uint32_t pteOffset = (address >> 10) & 0x3FFFFC;
-        uint32_t pte = *(uint32_t*)(pteOffset + 0x3FC00000);
-        uint32_t pageNum = pte >> 12;
-        uint32_t pfnIndex;
-        uint32_t* pfnPtr;
-        uint32_t pfn;
-
-        if (pageNum < 0x20000) {
-            pfnIndex = pageNum - 0x17820000;
-        } else {
-            pfnIndex = pageNum + 0x1FFB0000;
-        }
-        pfnPtr = (uint32_t*)(pfnIndex << 2);
-        pfn = *pfnPtr;
-
-        assert(pfn & 0x10000);
-        {
-            uint32_t usage = pfn >> 27;
-            assert(usage == 2 || usage == 0xb);
-        }
-        assert(pfn & 0xFFFC);
-
-        pfn = *pfnPtr;
-        pfn = (pfn & ~0x07FE0000) | ((index << 17) & 0x07FE0000);
-        pfn = (pfn & ~0xFFFC) | ((((pfn >> 2) - 1) << 2) & 0xFFFC);
-        *pfnPtr = pfn;
-    }
-
-    KfReleaseSpinLock(lock, irql);
-}
-
-void MiZeroAndFlushPtes(uint32_t pteBase, uint32_t count) {
-    // struct {
-    //     uint32_t count;
-    //     uint32_t entries[32];
-    // } flush;
-    // uint32_t endPte;
-    // uint32_t currentPte;
-    //
-    // assert(pteBase <= 0x3FFFFFFF);
-    //
-    // flush.count = 0;
-    // endPte = pteBase + count * 4;
-    // currentPte = pteBase;
-    //
-    // while (currentPte < endPte) {
-    //     *(uint32_t*)currentPte = 0;
-    //     flush.entries[flush.count] = currentPte << 10;
-    //     flush.count++;
-    //     if (flush.count == 32) {
-    //         flush.count = 0;
-    //         KeFlushMultipleTb((void*)32, flush.entries);
-    //     }
-    //     currentPte += 4;
-    // }
-    //
-    // if (flush.count != 0) {
-    //     KeFlushMultipleTb((void*)flush.count, flush.entries);
-    // }
 }
