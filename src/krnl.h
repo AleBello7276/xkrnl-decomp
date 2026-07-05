@@ -14,6 +14,8 @@ typedef uint32_t KSPIN_LOCK;  // Kernel Spin Lock
 typedef uint8_t KIRQL;
 #define IRQL_HIGH_LEVEL 0x7c
 
+#define KERNEL_BASE_ADDRESS (PVOID)0x80040000
+
 typedef struct _KPCR {
     char paddd[24];
     KIRQL m_currentIrql;
@@ -26,10 +28,10 @@ typedef struct _KPCR {
 } KPCR;
 
 typedef struct _STRING {
-    uint16_t Length;
-    uint16_t MaximumLength;
-    uint8_t* Buffer;
-} STRING;
+    USHORT Length;
+    USHORT MaximumLength;
+    PCHAR Buffer;
+} STRING, ANSI_STRING, *PANSI_STRING;
 
 typedef struct _MEMORY_DESCRIPTOR {
     uint32_t unk0;

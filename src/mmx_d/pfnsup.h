@@ -1,6 +1,8 @@
 #pragma once
 
+#include "intrinsics.h"
 #include <types.h>
+
 
 typedef struct _PfnRegion {
     uint16_t unk0[34];  // init as 0xfffe !?!?

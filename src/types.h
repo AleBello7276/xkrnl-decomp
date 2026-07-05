@@ -47,15 +47,21 @@ typedef double f64;
 */
 typedef void VOID, *PVOID, *LPVOID;
 typedef unsigned char BYTE, *PBYTE;
-typedef signed char CHAR;
+typedef signed char CHAR, *PCHAR;
 typedef unsigned char UCHAR;
 typedef signed short SHORT;
 typedef unsigned short USHORT;
 typedef unsigned short WORD;
 typedef signed int INT;
 typedef unsigned int UINT, UINT_PTR, *PUINT_PTR;
-typedef signed long LONG;
-typedef unsigned long ULONG;
+
+typedef s32 LONG, *PLONG, *LPLONG;
+typedef s32 LONG_PTR, *PLONG_PTR;
+typedef signed int LONG32, *PLONG32;
+
+typedef u32 ULONG, *PULONG;
+typedef u32 ULONG_PTR, *PULONG_PTR;
+
 typedef unsigned long DWORD, *PDWORD;
 typedef signed long long LONGLONG;
 typedef unsigned long long ULONGLONG;
@@ -65,9 +71,6 @@ typedef signed int BOOL;
 typedef BYTE BOOLEAN;
 #define TRUE 1
 #define FALSE 0
-
-typedef uint64_t ULONG_PTR;
-typedef ULONG_PTR* PULONG_PTR;
 
 typedef short WCHAR;
 typedef char CHAR;
