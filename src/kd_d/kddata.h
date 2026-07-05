@@ -1,12 +1,6 @@
 #pragma once
 
-#include <krnl.h>
+#include "kd.h"
 
-#define KD_PRINT_BUFFER_SIZE 0x3000
-
-extern uint8_t KdPrintCircularBuffer[KD_PRINT_BUFFER_SIZE];
-extern uint8_t* KdPrintWritePointer;
-
-extern MEMORY_DESCRIPTOR KdPhysicalMemoryDescriptor;
-
-extern uint32_t KdPrintRolloverCount;
+#define KDP_BREAKPOINT_ALIGN 3
+#define KDP_BREAKPOINT_VALUE 0x0FE00016  // twi 31, r0, 0x0016

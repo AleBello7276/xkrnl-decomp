@@ -1102,7 +1102,7 @@ sata_d/cdrom.c:
 	.text       start:0x800C9718 end:0x800C97D8
 	.text       start:0x801B06B8 end:0x801B08B8
 	.data       start:0x801D0B20 end:0x801D0CB0
-	.data       start:0x801E4698 end:0x801E46D8
+	.data       start:0x801E4698 end:0x801E46D8 rename:.bss
 	CLRDATAA    start:0x8025B780 end:0x80263F80
 
 sata_d/disk.c:
@@ -6487,7 +6487,7 @@ dump_d/dumpp.c:
 
 kd_d/kddata.c:
 	.data       start:0x801DD488 end:0x801DD81C
-	.data       start:0x80225770 end:0x80230730
+	.data       start:0x80225770 end:0x80230730 rename:.bss
 	.data       start:0x80230730 end:0x80233740 rename:.bss
 	.data       start:0x80233740 end:0x802375A0
 

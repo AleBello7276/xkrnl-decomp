@@ -250,7 +250,7 @@
     },
     "kd_d": {
         "progress_category": "main",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/14.00.2110",
         "cflags": "base",
         "objects": {
             "kd_d/kdnet.c": "MISSING",
@@ -268,8 +268,8 @@
             "kd_d/kdmove.c": "MISSING",
             "kd_d/kdnetemac.c": "MISSING",
             "kd_d/xxkdsup.c": "MISSING",
-            "kd_d/kdnetio.c": "MISSING",
-            "kd_d/kdcomio.c": "MISSING",
+            "kd_d/kdnetio.c": "NonMatching",
+            "kd_d/kdcomio.c": "NonMatching",
             "kd_d/kdcpuapi.c": "MISSING",
             "kd_d/kddata.c": "NonMatching"
         }
@@ -624,7 +624,7 @@
             "sata_d/disk.c": "MISSING",
             "sata_d/channel.c": "MISSING",
             "sata_d/hvfuncs.c": "MISSING",
-            "sata_d/ema.c": "MISSING",
+            "sata_d/ema.c": "Matching",
             "sata_d/failures.c": "MISSING"
         }
     },
