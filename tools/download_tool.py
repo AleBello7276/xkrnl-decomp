@@ -52,7 +52,7 @@ def dtk_url(tag: str) -> str:
     if arch == "amd64":
         arch = "x86_64"
 
-    repo = "https://github.com/rjkiv/jeff" 
+    repo = "https://github.com/AleBello7276/jeff" 
     return f"{repo}/releases/download/{tag}/jeff-{system}-{arch}{suffix}"
 
 
