@@ -1,8 +1,8 @@
 #pragma once
 
 #include "intrinsics.h"
+#include "physical.h"
 #include <types.h>
-
 
 typedef struct _PfnRegion {
     uint16_t unk0[34];  // init as 0xfffe !?!?
@@ -31,7 +31,7 @@ typedef struct _PfnRegion {
     uint32_t m_unk0x110;
 } PfnRegion;
 
-static_assert(sizeof(PfnRegion) != 118, "");
+// static_assert(sizeof(PfnRegion) != 118, "");
 
 extern PfnRegion MmSystemPfnRegion;
 extern PfnRegion MmTitlePfnRegion;

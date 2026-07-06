@@ -52,10 +52,10 @@ uint32_t MiDecodePteProtectionMask(uint32_t pte) {
     }
     if (!(pte & 0x40))
         return protect;
-    if (pte & 0x10) {
-        protect |= 0x200;
-    } else {
+    if (!(pte & 0x10)) {
         protect |= 0x400;
+    } else {
+        protect |= 0x200;
     }
     return protect;
 }
@@ -101,7 +101,7 @@ int MiMakePhysicalProtectionMask(uint32_t protect, uint32_t* output) {
 bool MmIsDevkitMemoryPresent() {
     return MmDevkitMemoryPresent;
 }
-/*
+
 bool MmIsAddressValid(uint32_t address) {
     uint32_t pte;
     uint8_t* r3;
@@ -110,12 +110,12 @@ bool MmIsAddressValid(uint32_t address) {
 
     if (address <= 0x7FFFFFFF) {
         uint32_t pteAddr = MiGetMappedPteAddress(address);
-        if (pteAddr == 0)
-            goto invalid;
-        pte = *(uint32_t*)pteAddr;
-        if (pte & 1)
-            return 1;
-        goto invalid;
+        if (pteAddr == NULL)
+            return false;
+
+        if ((*(uint32_t*)pteAddr & 1) == 0)
+            return false;
+        return true;
     }
 
     if (address + 0x80000000U <= 0x1FFFFFFF) {
@@ -160,7 +160,6 @@ invalid:
 normalize:
     return result ? 1 : 0;
 }
-    */
 
 uint32_t MmQueryMemoryRegionType(uint32_t address) {
     if (address + 0x6E000000U <= 0xDFEFFFF)
@@ -184,16 +183,15 @@ uint32_t MmGetPoolPagesType(uint32_t address) {
 }
 
 void MmUnmapMemory(uint32_t address, uint32_t size) {
-    KSPIN_LOCK* lock = &MmGlobalLock;
-    KIRQL irql = KfAcquireSpinLock(lock);
+    KIRQL oldIrql = KfAcquireSpinLock(&MmGlobalLock);
     MiUnmapPages(address, size);
-    KfReleaseSpinLock(lock, irql);
+    KfReleaseSpinLock(&MmGlobalLock, oldIrql);
 }
 
+// NON_MATCHING
 void MmDoubleMapMemory(uint32_t srcAddr, uint32_t dstAddr, uint32_t numPages, uint32_t flags) {
     uint32_t pteBase;
     uint32_t endPte;
-    KSPIN_LOCK* lock;
     KIRQL irql;
 
     assert(GetKPCR->m_currentIrql < 2);
@@ -202,21 +200,19 @@ void MmDoubleMapMemory(uint32_t srcAddr, uint32_t dstAddr, uint32_t numPages, ui
     assert(numPages != 0);
 
     pteBase = ((srcAddr >> 10) & 0x3FFFFC) + 0x3FC00000;
-    lock = &MmGlobalLock;
     endPte = pteBase + numPages * 4 - 4;
 
-    irql = KfAcquireSpinLock(lock);
-    while (pteBase <= endPte) {
+    irql = KfAcquireSpinLock(&MmGlobalLock);
+    for (; pteBase <= endPte; pteBase += 4) {
         MiDoubleMapPage(pteBase, dstAddr, flags);
-        pteBase += 4;
-        dstAddr += 0x1000;
+        dstAddr += PAGE_4KB;
     }
-    KfReleaseSpinLock(lock, irql);
+    KfReleaseSpinLock(&MmGlobalLock, irql);
 }
 
 uint32_t MmResetLowestAvailablePages(uint32_t* titleSmallOld, uint32_t* systemSmallOld,
                                      uint32_t* titleLargeOld, uint32_t* systemLargeOld) {
-    KIRQL irql = KfAcquireSpinLock(&MmGlobalLock);
+    KIRQL Irql = KfAcquireSpinLock(&MmGlobalLock);
 
     if (titleSmallOld) {
         *titleSmallOld = MmTitlePfnRegion.m_unk0xf4;
@@ -242,26 +238,29 @@ uint32_t MmResetLowestAvailablePages(uint32_t* titleSmallOld, uint32_t* systemSm
         MmSystemPfnRegion.m_unk0xf8 = 0;
     }
 
-    KfReleaseSpinLock(&MmGlobalLock, irql);
+    KfReleaseSpinLock(&MmGlobalLock, Irql);
     return 0;
 }
 
-uint32_t MmQueryStatistics(uint32_t* buf) {
-    if (buf[0] < 0x68)
-        return 0xC000000D;
+// NON_MATCHING
+NTSTATUS MmQueryStatistics(uint32_t* buf) {
+    if (buf[0] >= 0x68) {
+        void* data;
+        KIRQL Irql;
 
-    {
-        KSPIN_LOCK* lock = &MmGlobalLock;
-        KIRQL irql = KfAcquireSpinLock(lock);
         MiQueryStatistics(buf);
-        KfReleaseSpinLock(lock, irql);
+        Irql = KfAcquireSpinLock(&MmGlobalLock);
+        KfReleaseSpinLock(&MmGlobalLock, Irql);
+
+        data = KeDebugMonitorData;
+        if (data) {
+            typedef void (*DebugCallback)(uint32_t, uint32_t*);
+            DebugCallback callback = (DebugCallback)(((uint32_t*)data)[6]);
+            callback(0x86, buf);
+        }
+
+        return STATUS_SUCCESS;
     }
 
-    if (KeDebugMonitorData) {
-        typedef void (*DebugCallback)(uint32_t, uint32_t*);
-        DebugCallback callback = (DebugCallback)(((uint32_t*)KeDebugMonitorData)[6]);
-        callback(0x86, buf);
-    }
-
-    return 0;
+    return STATUS_INVALID_PARAMETER;
 }

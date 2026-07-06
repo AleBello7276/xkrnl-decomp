@@ -416,7 +416,7 @@
     },
     "mmx_d": {
         "progress_category": "main",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/14.00.2110",
         "cflags": "base",
         "objects": {
             "mmx_d/physical.c": "NonMatching",
