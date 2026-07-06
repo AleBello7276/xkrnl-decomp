@@ -114,6 +114,7 @@ extern SataChannel SataCdRomChannelExtension;
 
 #pragma section("CLRDATAA", read, write)
 extern ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[0x800];
+extern ALLOC_SECT("CLRDATAA") uint32_t SataCdRomHvVerifyComplete;
 
 extern int32_t SataCdRomX360Media;
 extern int32_t SataCdRomEmulatorPresent;

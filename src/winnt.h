@@ -19,6 +19,6 @@ INLINE LONG InterlockedDecrement(LONG* Addend) {
 
 INLINE LONG InterlockedOr(LONG* value, LONG mask) {
     LONG v = _InterlockedOr(value, mask);
-    __lwsync();
+    // __lwsync();
     return v;
 }

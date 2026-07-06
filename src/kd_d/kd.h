@@ -29,10 +29,9 @@ typedef struct _KD_PHYSICAL_PORT {
 } KD_PHYSICAL_PORT;
 
 typedef struct _BREAKPOINT_ENTRY {
-    ULONG Flags;
+    UCHAR Flags;
     ULONG_PTR DirectoryTableBase;
     PVOID Address;
-    KDP_BREAKPOINT_TYPE Content;
 } BREAKPOINT_ENTRY, *PBREAKPOINT_ENTRY;
 
 extern uint8_t KdPrintCircularBuffer[KD_PRINT_BUFFER_SIZE];

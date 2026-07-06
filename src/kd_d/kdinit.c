@@ -29,13 +29,14 @@ extern void DbgBreakPointWithStatus(bool);
 
 extern bool KdPortGetByte(void*);
 
+// NON_MATCHING
 void KdInitializeSystem(bool idk) {
     if ((XboxHardwareInfo.Flags & HARDWAREINFO_FLAGS_0x80) == false) {
         KiDebugRoutine = &KdpStub;
         if (idk) {
             KdpByteSwapDebuggerDataBlock(&KdDebuggerDataBlock);
-            KdDebuggerDataBlock.Header.List.Blink = &KdpDebuggerDataListHead;
             KdDebuggerDataBlock.Header.List.Flink = KdpDebuggerDataListHead.Blink;
+            KdDebuggerDataBlock.Header.List.Blink = &KdpDebuggerDataListHead;
             KdpDebuggerDataListHead.Blink->Flink = (LIST_ENTRY*)&KdDebuggerDataBlock;
             KdpDebuggerDataListHead.Blink = &KdDebuggerDataBlock.Header;
             KdpNetInitializeParameters();
@@ -56,7 +57,6 @@ void KdInitializeSystem(bool idk) {
 
                 for (i = 0; i < BREAKPOINT_TABLE_SIZE; i++) {
                     KdpBreakpointTable[i].Flags = 0;
-                    KdpBreakpointTable[i].DirectoryTableBase = 0;
                     KdpBreakpointTable[i].Address = NULL;
                 }
 
@@ -69,8 +69,8 @@ void KdInitializeSystem(bool idk) {
             KdpNextPacketIdToSend = INITIAL_PACKET_ID | SYNC_PACKET_ID;
             KdpPacketIdExpected = INITIAL_PACKET_ID;
 
-            if (!(XboxHardwareInfo.BldrFlags & HARDWAREINFO_BLDR_0x100))
-                KdpLiteOnly = 1;
+            KdpLiteOnly = (XboxHardwareInfo.BldrFlags & HARDWAREINFO_BLDR_0x100) ? 1 : KdpLiteOnly;
+
             mask = KdpLiteOnly >= 0 ? 0x80 : 0x180;
 
             XboxHardwareInfo.Flags = InterlockedOr(&XboxHardwareInfo.Flags, mask);
