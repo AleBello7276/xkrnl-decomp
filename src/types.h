@@ -6,6 +6,7 @@
 
 #define ALLOC_SECT(section) __declspec(allocate(section))
 #define offsetof(type, member) ((size_t)&(((type*)0)->member))
+#define ALIGN_UP(x, a) (((x) + ((a) - 1)) & ~((a) - 1))
 
 // booleans and stuff
 typedef unsigned int bool;

@@ -145,6 +145,9 @@
    IOCTLs
 */
 
+#define IOCTL_0x4D014                                                                                        \
+    CTL_CODE(FILE_DEVICE_CONTROLLER, 0x405, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+
 #define IOCTL_SATA_FUNCTION_40A                                                                              \
     CTL_CODE(FILE_DEVICE_CONTROLLER, 0x40A, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
 
@@ -196,8 +199,10 @@ typedef struct _SataChannel {
 
 extern SataChannel SataCdRomChannelExtension;
 
+#define SCRATCH_BUFFER_SIZE 0x800
+
 #pragma section("CLRDATAA", read, write)
-extern ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[0x800];
+extern ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[SCRATCH_BUFFER_SIZE];
 extern ALLOC_SECT("CLRDATAA") uint32_t SataCdRomHvVerifyComplete;
 
 extern int32_t SataCdRomX360Media;

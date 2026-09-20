@@ -33,17 +33,17 @@ NTSTATUS EmaExecuteSingle(PVOID Param1) {
     Status = IoSynchronousDeviceIoControlRequest(IOCTL_CODE__EG, ChannelExtension, &Block, sizeof(Block),
                                                  NULL, 0, NULL);
 
-    return ExExpansionCall(0x454D4120, 0x10002, Param1, &Block, Status);
+    return ExExpansionCall(EMA_MAGIC, 0x10002, Param1, &Block, Status);
 }
 
 NTSTATUS EmaExecute(PVOID Param1) {
     NTSTATUS status;
 
-    while ((status = EmaExecuteSingle(Param1)) == STATUS_PENDING) {
-    }
+    while ((status = EmaExecuteSingle(Param1)) == STATUS_PENDING)
+        ;
 
     if (status == STATUS_NOT_IMPLEMENTED)
         return STATUS_SUCCESS;
-    else
-        return status;
+
+    return status;
 }

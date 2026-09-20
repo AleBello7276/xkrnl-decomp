@@ -12,6 +12,8 @@ typedef struct HardwareInfo {
 
 #define HARDWAREINFO_FLAGS_0x80 0x80
 
+#define HARDWAREINFO_FLAGS_0x2000 0x2000
+
 #define HARDWAREINFO_BLDR_0x100 0x100
 
 extern HardwareInfo XboxHardwareInfo;
