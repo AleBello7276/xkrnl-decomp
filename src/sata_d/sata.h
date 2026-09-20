@@ -1,5 +1,6 @@
 #pragma once
 
+#include "krnl.h"
 #include <types.h>
 
 // https://github.com/xenon-emu/xenon/blob/main/Xenon/Core/PCI/SATA.h
@@ -82,15 +83,98 @@
 #define ATA_COMMAND_SECURITY_UNLOCK 0xF2
 #define ATA_COMMAND_SECURITY_DISABLE_PASSWORD 0xF6
 
+//
+// ATAPI (ODD) Registers Offsets
+//
+
+// Communication with disk drive controllers is achieved via I/O registers.
+// Registers and their offsets relative to the base
+// address of command block registers and the base address of control block
+// registers
+
+// Registers Offsets from Command Block
+
+// Data Reg (Read/Write)
+#define ATAPI_REG_DATA 0x0
+// Error Reg (Read)
+#define ATAPI_REG_ERROR 0x1
+// Features Reg (Write)
+#define ATAPI_REG_FEATURES 0x1
+// Interrupt Reason Reg (Read)
+#define ATAPI_REG_INT_REAS 0x2
+// Sector Count Reg (Write)
+#define ATAPI_REG_SECTOR_COUNT 0x2
+// LBA Low Reg (Read/Write)
+#define ATAPI_REG_LBA_LOW 0x3
+// Byte Count Low Reg (Read/Write)
+#define ATAPI_REG_BYTE_COUNT_LOW 0x4
+// Byte Count High Reg (Read/Write)
+#define ATAPI_REG_BYTE_COUNT_HIGH 0x5
+// Device Reg (Read/Write)
+#define ATAPI_REG_DEVICE 0x6
+// Status Reg (Read)
+#define ATAPI_REG_STATUS 0x7
+// Command Reg (Write)
+#define ATAPI_REG_COMMAND 0x7
+
+#define ATAPI_REGS_ADDR 0x7FEA1200
+
+#define ATAPI_WRITE(type, offset, data)                                                                      \
+    *((volatile type*)(ATAPI_REGS_ADDR + offset)) = data;                                                    \
+    __eieio()
+
+#define ATAPI_WRITE_U8(offset, data) ATAPI_WRITE(uint8_t, offset, data)
+#define ATAPI_WRITE_U32(offset, data) ATAPI_WRITE(uint32_t, offset, data)
+
+#define ATAPI_READ(type, offset) *((volatile type*)(ATAPI_REGS_ADDR + offset))
+#define ATAPI_READ_U8(offset) ATAPI_READ(uint8_t, offset)
+#define ATAPI_READ_U32(offset) ATAPI_READ(uint32_t, offset)
+
+/* ----- */
+
+#define ATAPI_WRITE_DATA(data) ATAPI_WRITE_U32(ATAPI_REG_DATA, data)
+#define ATAPI_WRITE_DEVICE(data) ATAPI_WRITE_U8(ATAPI_REG_DEVICE, data)
+#define ATAPI_WRITE_COMMAND(data) ATAPI_WRITE_U8(ATAPI_REG_COMMAND, data)
+
+#define ATAPI_READ_STATUS() ATAPI_READ_U8(ATAPI_REG_STATUS)
+
+//
+//
+//
+/*
+   IOCTLs
+*/
+
+#define IOCTL_SATA_FUNCTION_40A                                                                              \
+    CTL_CODE(FILE_DEVICE_CONTROLLER, 0x40A, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+
+#define IOCTL_SATA_FUNCTION_40B                                                                              \
+    CTL_CODE(FILE_DEVICE_CONTROLLER, 0x40B, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+
+/*----------------------------------------*/
+//
+//
+//
+
 typedef void (*SATA_COMPLETION_ROUTINE)(void* irp, int32_t status, void* info);
 
+typedef struct _SATA_REQUEST SATA_REQUEST;
+
 typedef struct _SataExtension {
-    uint8_t Reserved_0x00[0x14];
+    uint8_t Reserved_0x00[0x10];
+    SATA_REQUEST* Request;
     ULONG Flags;
 } SataExtension;
 
 typedef struct _SataChannel {
-    char pad0[0x6C];
+    uint32_t unk0x0;
+    uint32_t unk0x4;
+    uint32_t unk0x8;
+    char pad0[0x50];
+    void* idk0;
+    uint32_t idk;
+    uint32_t idk2;
+    uint32_t idk3;
     SataExtension* ChannelExtension;
     char pad88[0x88 - 0x70];
     void* bufferPtr;

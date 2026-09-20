@@ -79,6 +79,9 @@ typedef const char* LPCSTR;
 typedef short* LPWSTR;
 typedef const short* LPCWSTR;
 
+typedef void* HANDLE;
+typedef HANDLE HMODULE;
+
 typedef union _LARGE_INTEGER {
     struct {
         LONG HighPart;
