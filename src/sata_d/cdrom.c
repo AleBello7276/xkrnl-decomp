@@ -519,3 +519,28 @@ NTSTATUS SataCdRomSscDisable(uint32_t param_1) {
 
     return STATUS_UNSUCCESSFUL;
 }
+
+void SataCdRomSscFinishCheckDiscReady(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);
+
+void SataCdRomSscCheckDiscReady() {
+    ATAPI_PACKET Packet;
+    memset(&Packet, 0, sizeof(ATAPI_PACKET));
+    Packet.Generic.OperationCode = SCSIOP_TEST_UNIT_READY;
+
+    SataCdRomIssueAtapiRequest(&Packet, NULL, NULL, NULL, SataCdRomSscFinishCheckDiscReady);
+}
+
+NTSTATUS SataCdRomDVDAP20AuthenticateDrive();
+
+// NTSTATUS SataCdRomDriveAuthentication() {
+//     NTSTATUS Status;
+//     SataCdRomSetBootPerfStat(3);
+//     EmaExecute((PVOID)1);
+//     Status = SataCdRomDVDAP20AuthenticateDrive();
+//     if (NT_SUCCESS(Status)) {
+//         return EmaExecute((PVOID)2);
+//     }
+//
+//     SataCdRomSetBootPerfStat(4);
+//     return;
+// }
