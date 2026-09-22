@@ -1,8 +1,10 @@
 #include "mmsup.h"
 
 #include "intrinsics.h"
+#include "ke_d/ke.h"
 #include "krnl.h"
 #include "pfnsup.h"
+
 
 uint32_t MiGetPteAddress(uint32_t address) {
     if (address - 0x40000000U <= 0x3FFFFFFF) {

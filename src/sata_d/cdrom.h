@@ -53,6 +53,9 @@ extern BYTE SataCdRomHCDFRuntimePatchData_XGD2[RUNTIME_PATCH_DATA_SIZE];
 extern const WORD SataCdRomTSSTValidChecksums[TSST_CHECKSUMS_COUNT];
 extern struct _HCDF_RUNTIME_PATCH* SataCdRomActiveHCDFRuntimePatch;
 
+extern KSPIN_LOCK SataCdRomDvdAuthBufferLock;
+extern PVOID SataCdRomDvdAuthBufferPhysical;
+
 typedef struct _SATA_CDROM_HCDF_WORK_BUFFER {
     BYTE Data[32];
     BYTE Hash[20];

@@ -30,6 +30,12 @@ uint64_t SataCdRomAuthenticationDisabled = 0;
 
 BYTE SataCdRomSenseData[SENSE_DATA_SIZE];
 
+/* __Linker__ */
+KSPIN_LOCK SataCdRomDvdAuthBufferLock;
+
+/* __Linker__ */
+PVOID SataCdRomDvdAuthBufferPhysical;
+
 ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[SCRATCH_BUFFER_SIZE];
 
 BYTE SataCdRomHCDFRuntimePatchData_XGD2[RUNTIME_PATCH_DATA_SIZE]

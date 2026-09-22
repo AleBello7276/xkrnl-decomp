@@ -257,7 +257,7 @@ extern SATA_CHANNEL SataCdRomChannelExtension;
 
 #pragma section("CLRDATAA", read, write)
 extern ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[SCRATCH_BUFFER_SIZE];
-extern ALLOC_SECT("CLRDATAA") uint32_t SataCdRomHvVerifyComplete;
+extern ALLOC_SECT("CLRDATAA") BOOL SataCdRomHvVerifyComplete;
 
 extern int32_t SataCdRomX360Media;
 extern int32_t SataCdRomEmulatorPresent;
@@ -274,3 +274,21 @@ extern bool SataCdRomSscInitialized;
 extern uint32_t SataCdRomSscDisabled;
 extern uint32_t SataCdRomSscTotalReadErrors;
 extern uint64_t SataCdRomAuthenticationDisabled;
+
+typedef DWORD CDROM_HV_FUNCTION;
+typedef enum _CDROM_HV_FUNCTION {
+    SataCdRomHvBuildNVPage_e = 0x25,
+    SataCdRomHvVerifyNVPage_e = 0x26,
+    SataCdRomHvRecordAuthenticationPage_e = 0x27,
+    SataCdRomHvRecordXControl_e = 0x28,
+    SataCdRomHvGetAuthPage_e = 0x29,
+    SataCdRomHvVerifyAuthPage_e = 0x2A,
+    SataCdRomHvGetNextLBAIndex_e = 0x2B,
+    HvxDvdAuthVerifyLBA_e = 0x2c,
+    SataCdRomHvClearDiscAuthInfo_e = 0x2D,
+    SataCdRomHvGetAuthResults_e = 0x5C,
+    SataCdRomHvSetDiscAuthResult_e = 0x5E,
+    SataCdRomHvFwcr_e = 0x72,
+
+    Unknown_e = -1,
+} CDROM_HV_FUNCTION;

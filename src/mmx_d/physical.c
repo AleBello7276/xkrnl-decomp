@@ -1,5 +1,6 @@
 #include "physical.h"
 
+#include "ke_d/ke.h"
 #include "krnl.h"
 
 void HvxFlushDcacheRange(uint32_t startAddr, uint32_t size) {
@@ -9,9 +10,6 @@ void HvxFlushDcacheRange(uint32_t startAddr, uint32_t size) {
         blr
     }
 }
-
-KIRQL KfAcquireSpinLock(KSPIN_LOCK* lock);
-void KfReleaseSpinLock(KSPIN_LOCK* lock, KIRQL irql);
 
 uint32_t MmQueryAllocationSize(void* address) {
     uint64_t addr = (uint64_t)address;
