@@ -49,6 +49,9 @@ void SataChannelCancelPacket(SATA_CHANNEL* Channel);
 BOOL SataChannelSpinWhileBusy(DWORD Address);
 
 /* */
+BOOL SataChannelSpinWhileBusyAndNotDrq(DWORD Address);
+
+/* */
 void SataChannelInvalidParameterRequest(void* ext, void* irp);
 
 /* */
