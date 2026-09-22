@@ -1,5 +1,5 @@
 //
-// not just types but also general stuff and utils
+// not just types but also general stuff and utils.
 //
 
 #pragma once
