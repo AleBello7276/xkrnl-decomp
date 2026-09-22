@@ -1,5 +1,6 @@
 #pragma once
 
+#include "channel.h"
 #include "krnl.h"
 #include <types.h>
 
@@ -84,6 +85,73 @@
 #define ATA_COMMAND_SECURITY_DISABLE_PASSWORD 0xF6
 
 //
+// SCSI Command Descriptor Block Operation codes
+//
+
+// 6 Byte 'Standard' CDB
+#define SCSIOP_TEST_UNIT_READY 0x00
+#define SCSIOP_REQUEST_SENSE 0x03
+#define SCSIOP_FORMAT_UNIT 0x04
+#define SCSIOP_INQUIRY 0x12
+#define SCSIOP_MODE_SELECT6 0x15
+#define SCSIOP_MODE_SENSE6 0x1A
+#define SCSIOP_START_STOP 0x1B
+#define SCSIOP_TOGGLE_LOCK 0x1E
+
+// 10 Byte CDB
+#define SCSIOP_READ_FMT_CAP 0x23
+#define SCSIOP_READ_CAPACITY 0x25
+#define SCSIOP_READ10 0x28
+#define SCSIOP_SEEK10 0x2B
+#define SCSIOP_ERASE10 0x2C
+#define SCSIOP_WRITE10 0x2A
+#define SCSIOP_VER_WRITE10 0x2E
+#define SCSIOP_VERIFY10 0x2F
+#define SCSIOP_SYNC_CACHE 0x35
+#define SCSIOP_WRITE_BUF 0x3B
+#define SCSIOP_READ_BUF 0x3C
+#define SCSIOP_READ_SUBCH 0x42
+#define SCSIOP_READ_TOC 0x43
+#define SCSIOP_READ_HEADER 0x44
+#define SCSIOP_PLAY_AUDIO10 0x45
+#define SCSIOP_GET_CONFIG 0x46
+#define SCSIOP_PLAY_AUDIOMSF 0x47
+#define SCSIOP_EVENT_INFO 0x4A
+#define SCSIOP_TOGGLE_PAUSE 0x4B
+#define SCSIOP_STOP 0x4E
+#define SCSIOP_READ_INFO 0x51
+#define SCSIOP_READ_TRK_INFO 0x52
+#define SCSIOP_RES_TRACK 0x53
+#define SCSIOP_SEND_OPC 0x54
+#define SCSIOP_MODE_SELECT10 0x55
+#define SCSIOP_REPAIR_TRACK 0x58
+#define SCSIOP_MODE_SENSE10 0x5A
+#define SCSIOP_CLOSE_TRACK 0x5B
+#define SCSIOP_READ_BUF_CAP 0x5C
+
+// 12 Byte CDB
+#define SCSIOP_BLANK 0xA1
+#define SCSIOP_SEND_KEY 0xA3
+#define SCSIOP_REPORT_KEY 0xA4
+#define SCSIOP_PLAY_AUDIO12 0xA5
+#define SCSIOP_LOAD_CD 0xA6
+#define SCSIOP_SET_RD_AHEAD 0xA7
+#define SCSIOP_READ12 0xA8
+#define SCSIOP_WRITE12 0xAA
+#define SCSIOP_GET_PERF 0xAC
+#define SCSIOP_READ_DVD_S 0xAD
+#define SCSIOP_SET_STREAM 0xB6
+#define SCSIOP_READ_CD_MSF 0xB9
+#define SCSIOP_SCAN 0xBA
+#define SCSIOP_SET_CD_SPEED 0xBB
+#define SCSIOP_PLAY_CD 0xBC
+#define SCSIOP_MECH_STATUS 0xBD
+#define SCSIOP_READ_CD 0xBE
+#define SCSIOP_SEND_DVD_S 0xBF
+
+#define XE_MAX_DMA_PRD 16
+
+//
 // ATAPI (ODD) Registers Offsets
 //
 
@@ -117,26 +185,26 @@
 // Command Reg (Write)
 #define ATAPI_REG_COMMAND 0x7
 
-#define ATAPI_REGS_ADDR 0x7FEA1200
+#define ATAPI_REGS_ADDR (0x7FEA1200)
 
-#define ATAPI_WRITE(type, offset, data)                                                                      \
-    *((volatile type*)(ATAPI_REGS_ADDR + offset)) = data;                                                    \
+#define ATAPI_WRITE(type, base, offset, data)                                                                \
+    *((volatile type*)(base + offset)) = data;                                                               \
     __eieio()
 
-#define ATAPI_WRITE_U8(offset, data) ATAPI_WRITE(uint8_t, offset, data)
-#define ATAPI_WRITE_U32(offset, data) ATAPI_WRITE(uint32_t, offset, data)
+#define ATAPI_WRITE_U8(base, offset, data) ATAPI_WRITE(uint8_t, base, offset, data)
+#define ATAPI_WRITE_U32(base, offset, data) ATAPI_WRITE(uint32_t, base, offset, data)
 
-#define ATAPI_READ(type, offset) *((volatile type*)(ATAPI_REGS_ADDR + offset))
-#define ATAPI_READ_U8(offset) ATAPI_READ(uint8_t, offset)
-#define ATAPI_READ_U32(offset) ATAPI_READ(uint32_t, offset)
+#define ATAPI_READ(type, base, offset) *((volatile type*)(base + offset))
+#define ATAPI_READ_U8(base, offset) ATAPI_READ(uint8_t, base, offset)
+#define ATAPI_READ_U32(base, offset) ATAPI_READ(uint32_t, base, offset)
 
 /* ----- */
 
-#define ATAPI_WRITE_DATA(data) ATAPI_WRITE_U32(ATAPI_REG_DATA, data)
-#define ATAPI_WRITE_DEVICE(data) ATAPI_WRITE_U8(ATAPI_REG_DEVICE, data)
-#define ATAPI_WRITE_COMMAND(data) ATAPI_WRITE_U8(ATAPI_REG_COMMAND, data)
+#define ATAPI_WRITE_DATA(data) ATAPI_WRITE_U32(ATAPI_REGS_ADDR, ATAPI_REG_DATA, data)
+#define ATAPI_WRITE_DEVICE(data) ATAPI_WRITE_U8(ATAPI_REGS_ADDR, ATAPI_REG_DEVICE, data)
+#define ATAPI_WRITE_COMMAND(data) ATAPI_WRITE_U8(ATAPI_REGS_ADDR, ATAPI_REG_COMMAND, data)
 
-#define ATAPI_READ_STATUS() ATAPI_READ_U8(ATAPI_REG_STATUS)
+#define ATAPI_READ_STATUS() ATAPI_READ_U8(ATAPI_REGS_ADDR, ATAPI_REG_STATUS)
 
 //
 //
@@ -158,46 +226,32 @@
 //
 //
 //
+typedef union _ATAPI_PACKET {
+    BYTE Bytes[16];
+    QWORD Qwords[2];
+
+    struct {
+        BYTE OperationCode;  // +0x00
+        BYTE Reserved[15];   // +0x01
+    } Generic;
+
+    struct {
+        BYTE OperationCode;     // +0x00 = 0x03
+        BYTE Reserved1;         // +0x01
+        BYTE Reserved2;         // +0x02
+        BYTE Reserved3;         // +0x03
+        BYTE AllocationLength;  // +0x04
+        BYTE Control;           // +0x05
+        BYTE Reserved4[10];     // +0x06
+    } RequestSense;
+
+} ATAPI_PACKET;
 
 typedef void (*SATA_COMPLETION_ROUTINE)(void* irp, int32_t status, void* info);
 
-typedef struct _SATA_REQUEST SATA_REQUEST;
+typedef void (*ATAPI_REQUEST_ROUTINE)(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);
 
-typedef struct _SataExtension {
-    uint8_t Reserved_0x00[0x10];
-    SATA_REQUEST* Request;
-    ULONG Flags;
-} SataExtension;
-
-typedef struct _SataChannel {
-    uint32_t unk0x0;
-    uint32_t unk0x4;
-    uint32_t unk0x8;
-    char pad0[0x50];
-    void* idk0;
-    uint32_t idk;
-    uint32_t idk2;
-    uint32_t idk3;
-    SataExtension* ChannelExtension;
-    char pad88[0x88 - 0x70];
-    void* bufferPtr;
-    int32_t bufferLen;
-    char pad98[0x98 - 0x90];
-    uint32_t spinlock;
-    char padA1[0xA1 - 0x9C];
-    uint8_t irql;
-    char padA4[0xA4 - 0xA2];
-    uint32_t kPcrField;
-    uint8_t flags;
-    uint8_t retryCount;
-    uint8_t unk_0xAA;
-    uint8_t unk_0xAB;
-    void* currentIrp;
-    char padD1[0xD1 - 0xB0];
-    uint8_t unk_0xD1;
-} SataChannel;
-
-extern SataChannel SataCdRomChannelExtension;
+extern SATA_CHANNEL SataCdRomChannelExtension;
 
 #define SCRATCH_BUFFER_SIZE 0x800
 

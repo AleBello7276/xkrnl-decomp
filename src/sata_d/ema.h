@@ -5,6 +5,13 @@
 
 #include "sata.h"
 
+// TODO: sort this
+extern NTSTATUS ExExpansionCall(u32 SelectorId, u32 SomeCodeIDX, void* Param1, void* Block, u32);
+extern NTSTATUS IoSynchronousDeviceIoControlRequest(uint64_t IoControlCode, void* DeviceObject,
+                                                    PVOID InputBuffer, uint64_t InputBufferLength,
+                                                    PVOID OutputBuffer, uint64_t OutputBufferLength,
+                                                    uint64_t* BytesReturned);
+
 #define EMA_MAGIC 0x454d4120 /* "EMA " in ascii*/
 
 // TODO: TBD

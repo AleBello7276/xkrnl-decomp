@@ -73,6 +73,8 @@ typedef BYTE BOOLEAN;
 #define TRUE 1
 #define FALSE 0
 
+typedef u64 QWORD;
+
 typedef short WCHAR;
 typedef char CHAR;
 typedef char* LPSTR;

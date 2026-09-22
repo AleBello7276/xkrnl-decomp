@@ -3,6 +3,7 @@
 #include "ema.h"
 #include "fatalError.h"
 #include "init/kdataseg.h"
+#include "ke_d/ke.h"
 #include "krnl.h"
 #include "types.h"
 
@@ -26,6 +27,8 @@ bool SataCdRomSscInitialized = 0;
 uint32_t SataCdRomSscDisabled = 0;
 uint32_t SataCdRomSscTotalReadErrors = 0;
 uint64_t SataCdRomAuthenticationDisabled = 0;
+
+BYTE SataCdRomSenseData[SENSE_DATA_SIZE];
 
 ALLOC_SECT("CLRDATAA") uint8_t SataCdRomAP21ScratchBuffer[SCRATCH_BUFFER_SIZE];
 
@@ -93,7 +96,7 @@ bool SataCdRomSelectDeviceAndSpinWhileBusy() {
 bool SataCdRomWritePacket(uint32_t* pkt) {
     uint32_t i;
 
-    assert(GetKPCR->m_currentIrql == SataCdRomChannelExtension.irql);
+    assert(GetKPCR->m_currentIrql == SataCdRomChannelExtension.mIrql);
     assert((__getr13() + 0x100) == SataCdRomChannelExtension.kPcrField);
 
     // issue ATA packet command
@@ -129,7 +132,7 @@ bool SataCdRomWritePacket(uint32_t* pkt) {
 // HACK, so it doesnt inline memcpy, need a deeper look at this
 #pragma function(memcpy)
 NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size) {
-    const uint32_t SENSE_DATA_SIZE = 18;
+    const uint32_t BUFF_SIZE = 18;
 
     if (buffer == nullptr)
         return STATUS_INVALID_PARAMETER;
@@ -192,7 +195,7 @@ void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2) {
 }
 
 void SataCdRomStartIo(void* deviceObject, void* irp) {
-    SataChannel* ext = &SataCdRomChannelExtension;
+    SATA_CHANNEL* ext = &SataCdRomChannelExtension;
     void* curIrp = ext->currentIrp;
 
     if (irp == curIrp) {
@@ -250,7 +253,7 @@ done:
 }
 
 void SataCdRomStandby() {
-    KIRQL* oldIrql;
+    KIRQL oldIrql;
 
     assert(XboxHardwareInfo.Flags & HARDWAREINFO_FLAGS_0x2000);
 
@@ -258,21 +261,6 @@ void SataCdRomStandby() {
     SataCdRomIssueImmediateCommand(&SataCdRomChannelExtension, 0xE0);
     KfLowerIrql(oldIrql);
 }
-
-extern void SataCdRomSscFinishSpeedDecrease();
-void DbgPrint(char* format, ...);
-
-extern NTSTATUS SataCdRomSendE7ReadWrite(uint32_t blockAddress, void* buffer, uint32_t transferLength,
-                                         bool read);
-
-extern NTSTATUS SataCdRomHLDSJumpToRam();
-extern NTSTATUS SataCdromCheckTSSTChecksum();
-
-extern NTSTATUS SataCdRomHLDSEnableAllCommands(void);
-extern NTSTATUS SataCdRomHLDSEnableFlashExe(void);
-extern void XeCryptSha(const void* input1, uint32_t input1Size, const void* input2, uint32_t input2Size,
-                       const void* input3, uint32_t input3Size, void* output, uint32_t outputSize);
-extern void VdDisplayFatalError(uint32_t errorCode);
 
 NTSTATUS SataCdRomActivateHCDFRuntimePatch() {
     SATA_CDROM_HCDF_WORK_BUFFER Buffer;
@@ -373,11 +361,6 @@ NTSTATUS SataCdRomActivateHCDFRuntimePatch() {
     return STATUS_UNSUCCESSFUL;
 }
 
-extern int DAT_80240ef0;
-
-#define SSC_MAX_ATTEMPTS 8
-#define SSC_MIN_SPEED 1
-
 bool SataCdRomSscOnReadError(SATA_REQUEST* pRequest) {
     uint32_t speedFloor;
 
@@ -414,4 +397,78 @@ bool SataCdRomSscOnReadError(SATA_REQUEST* pRequest) {
     }
 
     return false;
+}
+
+void SataCdRomFinishStandby(void* param_1, SATA_REQUEST* Request, NTSTATUS Status) {
+    Request->LastStatus = Status;
+    IoCompleteRequest(Request, 1);
+    SataChannelStartNextPacket(param_1);
+}
+
+void SataCdRomCancelPacket() {
+    SataChannelCancelPacket(&SataCdRomChannelExtension);
+}
+
+void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t Command) {
+    assert(GetKPCR->m_currentIrql == 2);
+
+    KfRaiseIrql(Channel->mIrql);
+    KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
+
+    Channel->kPcrField = &GetKPCR->unk_0x100;
+
+    if (SataCdRomSelectDeviceAndSpinWhileBusy()) {
+        ATAPI_WRITE_COMMAND(Command);
+        SataChannelSpinWhileBusy(ATAPI_REGS_ADDR);
+    }
+
+    assert(GetKPCR->m_currentIrql == Channel->mIrql);
+    assert(&GetKPCR->unk_0x100 == Channel->kPcrField);
+
+    KeReleaseSpinLockFromRaisedIrql(&Channel->mSpinLock);
+    KfLowerIrql(2);
+}
+
+void SataCdRomStartCheckVerify(SATA_CHANNEL* Channel, SATA_REQUEST* Request) {
+    ATAPI_PACKET Packet;
+    memset(&Packet, 0, sizeof(ATAPI_PACKET));
+
+    Request->TransferLength = 0;
+    Channel->unk_0xAB = 0;
+
+    Packet.Generic.OperationCode = SCSIOP_TEST_UNIT_READY;
+    SataCdRomIssueAtapiRequest(&Packet, NULL, NULL, NULL, SataCdRomFinishGeneric);
+}
+
+void SataCdRomFinishGeneric(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status) {
+    ATAPI_PACKET Packet;
+
+    if (Status == STATUS_IO_DEVICE_ERROR) {
+        const size_t ALLOCATION_SIZE = 18;
+
+        memset(&Packet, 0, sizeof(Packet));
+
+        Packet.RequestSense.OperationCode = SCSIOP_REQUEST_SENSE;
+        Packet.RequestSense.AllocationLength = ALLOCATION_SIZE;
+
+        SataCdRomIssueAtapiRequest(&Packet, (PVOID)SataCdRomStaticTransferBuffer, ALLOCATION_SIZE, NULL,
+                                   SataCdRomFinishRequestSense);
+        return;
+    }
+
+    if (Status == STATUS_IO_TIMEOUT) {
+        assert(GetKPCR->m_currentIrql == 2);
+
+        KfRaiseIrql(Channel->mIrql);
+        KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
+
+        Channel->kPcrField = &GetKPCR->unk_0x100;
+
+        SataChannelResetDevice(Channel, SataCdRomPollResetComplete);
+        return;
+    }
+
+    Request->LastStatus = Status;
+    IoCompleteRequest(Request, 1);
+    SataChannelStartNextPacket(Channel);
 }

@@ -1,17 +1,10 @@
 #include "ema.h"
 
-extern NTSTATUS ExExpansionCall(u32 SelectorId, u32 SomeCodeIDX, void* Param1, void* Block, u32);
-
-extern NTSTATUS IoSynchronousDeviceIoControlRequest(uint64_t IoControlCode, void* DeviceObject,
-                                                    PVOID InputBuffer, uint64_t InputBufferLength,
-                                                    PVOID OutputBuffer, uint64_t OutputBufferLength,
-                                                    uint64_t* BytesReturned);
-
 NTSTATUS EmaExecuteSingle(PVOID Param1) {
     const u32 IOCTL_CODE__EG = 0x4D014;
 
     SATA_EMA_BLOCK Block;
-    SataExtension* ChannelExtension;
+    SATA_EXTENSION* ChannelExtension;
     NTSTATUS Status;
 
     ChannelExtension = SataCdRomChannelExtension.ChannelExtension;

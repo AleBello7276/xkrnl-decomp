@@ -3,8 +3,8 @@
 
 // TODO
 extern bool KdNetIsEnabled();
-extern KIRQL* KfRaiseIrql(KIRQL);
-extern void KfLowerIrql(KIRQL*);
+extern KIRQL KfRaiseIrql(KIRQL);
+extern void KfLowerIrql(KIRQL);
 extern void KdpNetQuiesce(uint32_t);
 extern uint32_t KdpMoveMemory(uint8_t* dest, uint8_t* src, uint32_t len, bool unk);
 
@@ -91,7 +91,7 @@ void KdInitializeSystem(bool idk) {
 
 void KdLogDbgPrint(STRING* str) {
     uint32_t length;
-    KIRQL* oldIrql;
+    KIRQL oldIrql;
 
     oldIrql = KfRaiseIrql(IRQL_HIGH_LEVEL);
     length = str->Length;
@@ -128,7 +128,7 @@ void KdLogDbgPrint(STRING* str) {
 
 void KdNotifyQuiesce(uint32_t notification) {
     if ((XboxHardwareInfo.Flags & 0x80) && KdNetIsEnabled()) {
-        KIRQL* old = KfRaiseIrql(IRQL_HIGH_LEVEL);
+        KIRQL old = KfRaiseIrql(IRQL_HIGH_LEVEL);
         KdpNetQuiesce(notification);
         KfLowerIrql(old);
     }

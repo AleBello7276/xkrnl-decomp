@@ -18,3 +18,7 @@ typedef struct _TIMESTAMP_BUNDLE {
 } TIMESTAMP_BUNDLE;
 
 extern ALLOC_SECT("PROTDATA") TIMESTAMP_BUNDLE KeTimeStampBundle;
+
+#pragma section("CLRDATAA", read, write)
+#define STATIC_TRANSFER_BUFFER_SIZE 32
+extern ALLOC_SECT("CLRDATAA") BYTE SataCdRomStaticTransferBuffer[STATIC_TRANSFER_BUFFER_SIZE];

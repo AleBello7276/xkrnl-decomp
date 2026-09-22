@@ -622,10 +622,10 @@
         "objects": {
             "sata_d/cdrom.c": "NonMatching",
             "sata_d/disk.c": "MISSING",
-            "sata_d/channel.c": "MISSING",
+            "sata_d/channel.c": "NonMatching",
             "sata_d/hvfuncs.c": "NonMatching",
             "sata_d/ema.c": "Matching",
-            "sata_d/failures.c": "MISSING"
+            "sata_d/failures.c": "NonMatching"
         }
     },
     "sfcx_d": {

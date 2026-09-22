@@ -8,7 +8,8 @@
 #include "ntstatus.h"
 #include "types.h"
 
-typedef uint32_t KSPIN_LOCK;  // Kernel Spin Lock
+typedef ULONG_PTR KSPIN_LOCK;
+typedef KSPIN_LOCK* PKSPIN_LOCK;
 
 // IRQLs
 typedef uint8_t KIRQL;

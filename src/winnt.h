@@ -22,3 +22,8 @@ INLINE LONG InterlockedOr(LONG* value, LONG mask) {
     // __lwsync();
     return v;
 }
+
+INLINE LONG InterlockedExchange(LONG volatile* Target, LONG Value) {
+    LONG v = _InterlockedExchange(Target, Value);
+    return v;
+}
