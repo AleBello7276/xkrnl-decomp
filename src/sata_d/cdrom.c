@@ -478,3 +478,44 @@ void SataCdRomFinishGeneric(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTAT
     IoCompleteRequest(Request, 1);
     SataChannelStartNextPacket(Channel);
 }
+
+void KeAcquireSpinLockAtRaisedIrql(PKSPIN_LOCK Lock);
+void SataCdRomRestartCurrentPacket();
+
+void SataCdRomWaitAndRestartCurrentPacket(SATA_CHANNEL* pChannel, ULONG Idk) {
+    ULONG Delay = Idk;
+    SATA_CHANNEL* Channel;
+
+    SataChannelSetTimerPeriod(pChannel, 100);
+
+    Channel = pChannel;
+
+    assert(GetKPCR->m_currentIrql == 2);
+
+    KfRaiseIrql(Channel->mIrql);
+
+    KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
+
+    Channel->retryCount = Delay / 100;
+    Channel->mRoutine = SataCdRomRestartCurrentPacket;
+    Channel->kPcrField = &GetKPCR->unk_0x100;
+
+    assert(GetKPCR->m_currentIrql == Channel->mIrql);
+    assert(&GetKPCR->unk_0x100 == Channel->kPcrField);
+
+    KeReleaseSpinLockFromRaisedIrql(&Channel->mSpinLock);
+
+    KfLowerIrql(2);
+}
+
+NTSTATUS SataCdRomSscDisable(uint32_t param_1) {
+    DWORD local_20[4];
+
+    XeKeysGetStatus(local_20);
+    if (((local_20[0] & 0x8000) == 0) || ((local_20[0] & 8) != 0)) {
+        SataCdRomSscDisabled = param_1;
+        return STATUS_SUCCESS;
+    }
+
+    return STATUS_UNSUCCESSFUL;
+}

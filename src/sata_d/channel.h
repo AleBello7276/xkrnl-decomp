@@ -15,7 +15,9 @@ typedef struct _SataChannel {
     uint32_t unk0x0;
     uint32_t unk0x4;
     uint32_t unk0x8;
-    char pad0[0x50];
+    char pad1[8];
+    PVOID* mRoutine;
+    char pad0[0x44];
     void* idk0;
     uint32_t idk;
     uint32_t idk2;
@@ -29,7 +31,7 @@ typedef struct _SataChannel {
     char padA1[0xA1 - 0x9C];
     KIRQL mIrql;
     char padA4[0xA4 - 0xA2];
-    void* kPcrField;
+    PVOID kPcrField;
     uint8_t flags;
     uint8_t retryCount;
     uint8_t unk_0xAA;
@@ -61,7 +63,7 @@ void SataChannelAbortCurrentPacket(SATA_CHANNEL* Channel);
 NTSTATUS SataChannelResetDevice(SATA_CHANNEL* pChannel, void* PollRoutine);
 
 /* */
-void SataChannelSetTimerPeriod(void* channelExt, uint32_t period);
+void SataChannelSetTimerPeriod(SATA_CHANNEL* pChannel, DWORD Period);
 
 /* */
 int32_t SataChannelPrepareBufferTransfer(SATA_CHANNEL* pChannel, void* buffer, int32_t length);
