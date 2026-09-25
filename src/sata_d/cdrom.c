@@ -143,10 +143,10 @@ NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size) {
     if (buffer == nullptr)
         return STATUS_INVALID_PARAMETER;
 
-    if (size < SENSE_DATA_SIZE)
+    if (size < BUFF_SIZE)
         return STATUS_BUFFER_TOO_SMALL;
 
-    memcpy(buffer, &SataCdRomSenseData, SENSE_DATA_SIZE);
+    memcpy(buffer, &SataCdRomSenseData, BUFF_SIZE);
     return STATUS_SUCCESS;
 }
 
