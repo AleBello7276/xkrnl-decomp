@@ -29,6 +29,10 @@ Supported versions:
 
 - `21256.18_D (xboxkrnld.exe)`: Kernel version: 17489.0
 
+The SHA1 hashes for the files are:
+- `a303e3404e8dd0b9e9defd38aa6c37e04eb19101` `xboxkrnld.exe` 
+- `625c54f4f273c66fd7a08e8b2ff7d1167983eeba` `xboxkrnld.pdb`
+
 Dependencies
 ============
 
