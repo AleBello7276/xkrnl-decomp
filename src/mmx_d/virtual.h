@@ -22,6 +22,6 @@ typedef struct _MMVAD_TREE {
 
 typedef struct _KPROCESS {
     char m_pad0[0x70];
-    MMVAD_TREE m_vadTree1;  // +0x70 (size 0x1C)
-    MMVAD_TREE m_vadTree2;  // +0x8C
-} KPROCESS;
+    MMVAD_TREE mTreeA;  // +0x70 (size 0x1C)
+    MMVAD_TREE mTreeB;  // +0x8C
+} KPROCESS, *PKPROCESS;

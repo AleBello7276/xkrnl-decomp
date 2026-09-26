@@ -13,6 +13,11 @@ typedef KSPIN_LOCK* PKSPIN_LOCK;
 
 // IRQLs
 typedef uint8_t KIRQL;
+#define PASSIVE_LEVEL ((KIRQL)0)
+#define LOW_LEVEL ((KIRQL)0)
+#define APC_LEVEL ((KIRQL)1)
+#define DISPATCH_LEVEL ((KIRQL)2)
+
 #define IRQL_HIGH_LEVEL 0x7c
 
 #define KERNEL_BASE_ADDRESS (PVOID)0x80040000

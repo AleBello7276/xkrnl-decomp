@@ -41,7 +41,7 @@ system:
 uint32_t MiRemoveAnySmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2);
 
 void MiRemoveZeroSmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
-    assert(GetKPCR->m_currentIrql == 2);
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
     KeZeroPage(MiRemoveAnySmallPage(region, unk1, unk2));
 }
@@ -49,19 +49,22 @@ void MiRemoveZeroSmallPage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
 // TODO, continue
 uint32_t MiRemoveAnyLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
     uint32_t uVar2;
+    DWORD lVar4;
 
-    assert(!(unk1 > 0x12));
-    assert(GetKPCR->m_currentIrql == 2);
-    assert(region->m_unk0x4c != 0);
+    assert(!(unk1 >= 0x13));
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
+    assert(region->m_unk0x4c > 0);
     assert(region->unk0[32] != 0xfffe);
 
-    uVar2 = region->unk0[32] * 8;
-    if (uVar2 < region->m_unk0xec || region->m_unk0xf0 < uVar2) {
-        if ((region->m_unk0xfc == 0 && region->m_unk0x100 == 0) || uVar2 < region->m_unk0xfc
-            || region->m_unk0x100 < uVar2) {
-            assert(0);
-        }
-    }
+    uVar2 = (ULONG_PTR)(region->unk0 + 32) << 3;
+    assert(!((uVar2 > region->m_unk0xec || region->m_unk0xf0 > uVar2)
+             && ((region->m_unk0xfc == 0 && region->m_unk0x100 == 0) || uVar2 > region->m_unk0xfc
+                 || region->m_unk0x100 > uVar2)));
+
+    lVar4 = ((uVar2 + (uVar2 > 0x1ffff ? 0x1ffb0000 : -0x17820000)) & 0x3fffffff) << 2;
+    assert(lVar4 & 1);
+    assert(lVar4 & 0x10000);
+    assert(unk1 != 4 && unk1 != 0xd);
 }
 
 uint32_t MiRemoveZeroLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) {
@@ -70,7 +73,7 @@ uint32_t MiRemoveZeroLargePage(PfnRegion* region, uint32_t unk1, uint32_t unk2) 
     uint32_t count;
     uint32_t i;
 
-    assert(GetKPCR->m_currentIrql == 2);
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
     count = MiRemoveAnyLargePage(region, unk1, unk2);
     for (i = 0; i < PAGE_COUNT; i++) {

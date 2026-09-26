@@ -8,7 +8,7 @@ typedef struct _PfnRegion {
     uint16_t unk0[34];  // init as 0xfffe !?!?
     int m_unk0x44;
     int m_unk0x48;
-    int m_unk0x4c;
+    DWORD m_unk0x4c;
     int pad2_0x50[11];
     int m_unk0x7c;
     int pad3[6];
