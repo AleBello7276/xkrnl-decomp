@@ -34,10 +34,12 @@ void SataCdRomSscFinishSpeedDecrease();
 void XeCryptSha(const PVOID InputA, DWORD InputA_Size, const PVOID InputB, DWORD InputB_Size,
                 const PVOID InputC, DWORD InputC_Size, PVOID Output, DWORD OutputSize);
 void VdDisplayFatalError(DWORD errorCode);
+void XeKeysGetStatus(DWORD*);
+void SataCdRomStandbySynchronized(PVOID);
 
 extern int DAT_80240ef0;
 
-extern bool SataCdRomSscInitialized;
+extern BOOL SataCdRomSscInitialized;
 
 extern HMODULE ExpUpdateModule;
 extern void* KeDebugMonitorData;
@@ -134,7 +136,7 @@ void SataCdRomNoTransferInterrupt(void* channelExt, void* arg, uint32_t flags);
 NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size);
 
 /* */
-void SataCdRomSetBootPerfStat(int32_t arg0);
+VOID SataCdRomSetBootPerfStat(ULONG Stat);
 
 /* */
 void SataCdRomRecordIncrementStatistic(int32_t arg0);
@@ -183,6 +185,24 @@ void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t command);
 
 /* */
 void SataCdRomFinishGeneric(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);
+
+/* */
+NTSTATUS SataCdRomSscDisable(BOOL Disable);
+
+/* */
+void SataCdRomSscFinishCheckDiscReady(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);
+
+/* */
+void SataCdRomSscCheckDiscReady();
+
+/* */
+NTSTATUS SataCdRomDriveAuthentication();
+
+/* */
+void SataCdRomBackgroundModeNotificationRoutine();
+
+/* */
+NTSTATUS SataCdRomDVDAP20AuthenticateDrive();
 
 /* */
 void SataCdRomFinishRequestSense(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);

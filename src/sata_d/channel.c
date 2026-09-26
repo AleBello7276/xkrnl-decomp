@@ -2,6 +2,7 @@
 
 #include "ke_d/ke.h"
 #include "sata.h"
+#include <intrinsics.h>
 
 BOOL SataChannelSpinWhileBusy(DWORD Address) {
     const size_t ONE_SECOND_IN_MICRO = 1000000;
@@ -37,4 +38,27 @@ BOOL SataChannelSpinWhileBusyAndNotDrq(DWORD Address) {
     }
 
     return FALSE;
+}
+
+void SataChannelDriverNotification(PVOID A, ULONG Idk) {
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
+    assert(GetKPCR->m_ProcessorNum == 0);
+
+    switch (Idk) {
+    case 0:
+        break;
+
+    case 1:
+        //    if (*(BYTE*)(A + 0x20)) {
+        //        *(BYTE*)(A + 0x20) = 0;
+        //        SataChannelStartNextPacket((DWORD*)(A - 0xb0));
+        //    }
+        return;
+
+    case 2:
+        break;
+
+    default:
+        return;
+    }
 }

@@ -23,8 +23,8 @@ uint32_t SataCdRomSscRetryCount = 0;
 uint32_t SataCdRomSscReadErrors = 0;
 int32_t SataCdRomSscReadCount = 0;
 int32_t SataCdRomSscTimeStamp = 0;
-bool SataCdRomSscInitialized = 0;
-uint32_t SataCdRomSscDisabled = 0;
+BOOL SataCdRomSscInitialized = FALSE;
+BOOL SataCdRomSscDisabled = FALSE;
 uint32_t SataCdRomSscTotalReadErrors = 0;
 uint64_t SataCdRomAuthenticationDisabled = 0;
 
@@ -416,7 +416,7 @@ void SataCdRomCancelPacket() {
 }
 
 void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t Command) {
-    assert(GetKPCR->m_currentIrql == 2);
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
     KfRaiseIrql(Channel->mIrql);
     KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
@@ -432,7 +432,7 @@ void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t Command) {
     assert(&GetKPCR->unk_0x100 == Channel->kPcrField);
 
     KeReleaseSpinLockFromRaisedIrql(&Channel->mSpinLock);
-    KfLowerIrql(2);
+    KfLowerIrql(DISPATCH_LEVEL);
 }
 
 void SataCdRomStartCheckVerify(SATA_CHANNEL* Channel, SATA_REQUEST* Request) {
@@ -463,7 +463,7 @@ void SataCdRomFinishGeneric(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTAT
     }
 
     if (Status == STATUS_IO_TIMEOUT) {
-        assert(GetKPCR->m_currentIrql == 2);
+        assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
         KfRaiseIrql(Channel->mIrql);
         KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
@@ -480,23 +480,24 @@ void SataCdRomFinishGeneric(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTAT
 }
 
 void KeAcquireSpinLockAtRaisedIrql(PKSPIN_LOCK Lock);
-void SataCdRomRestartCurrentPacket();
+void SataCdRomRestartCurrentPacket(PVOID);
 
 void SataCdRomWaitAndRestartCurrentPacket(SATA_CHANNEL* pChannel, ULONG Idk) {
+    const size_t PERIOD = 100;
     ULONG Delay = Idk;
     SATA_CHANNEL* Channel;
 
-    SataChannelSetTimerPeriod(pChannel, 100);
+    SataChannelSetTimerPeriod(pChannel, PERIOD);
 
     Channel = pChannel;
 
-    assert(GetKPCR->m_currentIrql == 2);
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
     KfRaiseIrql(Channel->mIrql);
 
     KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
 
-    Channel->retryCount = Delay / 100;
+    Channel->retryCount = Delay / PERIOD;
     Channel->mRoutine = SataCdRomRestartCurrentPacket;
     Channel->kPcrField = &GetKPCR->unk_0x100;
 
@@ -505,22 +506,21 @@ void SataCdRomWaitAndRestartCurrentPacket(SATA_CHANNEL* pChannel, ULONG Idk) {
 
     KeReleaseSpinLockFromRaisedIrql(&Channel->mSpinLock);
 
-    KfLowerIrql(2);
+    KfLowerIrql(DISPATCH_LEVEL);
 }
 
-NTSTATUS SataCdRomSscDisable(uint32_t param_1) {
-    DWORD local_20[4];
+NTSTATUS SataCdRomSscDisable(BOOL Disable) {
+    DWORD KeysStatus;
 
-    XeKeysGetStatus(local_20);
-    if (((local_20[0] & 0x8000) == 0) || ((local_20[0] & 8) != 0)) {
-        SataCdRomSscDisabled = param_1;
+    XeKeysGetStatus(&KeysStatus);
+
+    if (((KeysStatus & 0x8000) == 0) || KeysStatus & 8) {
+        SataCdRomSscDisabled = Disable;
         return STATUS_SUCCESS;
     }
 
     return STATUS_UNSUCCESSFUL;
 }
-
-void SataCdRomSscFinishCheckDiscReady(SATA_CHANNEL* Channel, SATA_REQUEST* Request, NTSTATUS Status);
 
 void SataCdRomSscCheckDiscReady() {
     ATAPI_PACKET Packet;
@@ -530,17 +530,33 @@ void SataCdRomSscCheckDiscReady() {
     SataCdRomIssueAtapiRequest(&Packet, NULL, NULL, NULL, SataCdRomSscFinishCheckDiscReady);
 }
 
-NTSTATUS SataCdRomDVDAP20AuthenticateDrive();
+NTSTATUS SataCdRomDriveAuthentication() {
+    NTSTATUS Status;
 
-// NTSTATUS SataCdRomDriveAuthentication() {
-//     NTSTATUS Status;
-//     SataCdRomSetBootPerfStat(3);
-//     EmaExecute((PVOID)1);
-//     Status = SataCdRomDVDAP20AuthenticateDrive();
-//     if (NT_SUCCESS(Status)) {
-//         return EmaExecute((PVOID)2);
-//     }
-//
-//     SataCdRomSetBootPerfStat(4);
-//     return;
-// }
+    SataCdRomSetBootPerfStat(3);
+    EmaExecute((PVOID)1);
+
+    if (NT_SUCCESS(Status = SataCdRomDVDAP20AuthenticateDrive())) {
+        Status = EmaExecute((PVOID)2);
+    }
+
+    SataCdRomSetBootPerfStat(4);
+
+    return Status;
+}
+
+void SataCdRomBackgroundModeNotificationRoutine() {
+    if (XboxHardwareInfo.Flags & HARDWAREINFO_FLAGS_0x4000)
+        SataCdRomStandbySynchronized(0);
+}
+
+void SataCdRomStandbySynchronized(PVOID param_1) {
+    KIRQL Irql;
+
+    Irql = KeRaiseIrqlToDpcLevel();
+    SataChannelDriverNotification(&SataCdRomChannelExtension.unk, 0);
+    SataCdRomIssueImmediateCommand(&SataCdRomChannelExtension, 0xe0);
+    SataCdRomClearAuthenticationStateInternal(param_1);
+    SataChannelDriverNotification(&SataCdRomChannelExtension.unk, 1);
+    KfLowerIrql(Irql);
+}

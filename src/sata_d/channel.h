@@ -37,7 +37,8 @@ typedef struct _SataChannel {
     uint8_t unk_0xAA;
     uint8_t unk_0xAB;
     void* currentIrp;
-    char padD1[0xD1 - 0xB0];
+    PVOID unk;
+    char padD1[0xD1 - 0xB4];
     uint8_t unk_0xD1;
 } SATA_CHANNEL;
 
@@ -73,3 +74,6 @@ void SataChannelCopyDoubleBuffer(SATA_CHANNEL* pChannel, void* buffer, int32_t l
 
 /* */
 int32_t SataChannelStartPacket(SATA_CHANNEL* pChannel, SATA_REQUEST* pRequest);
+
+/* */
+void SataChannelDriverNotification(PVOID, ULONG);

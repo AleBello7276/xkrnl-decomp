@@ -270,8 +270,8 @@ extern uint32_t SataCdRomSscRetryCount;
 extern uint32_t SataCdRomSscReadErrors;
 extern int32_t SataCdRomSscReadCount;
 extern int32_t SataCdRomSscTimeStamp;
-extern bool SataCdRomSscInitialized;
-extern uint32_t SataCdRomSscDisabled;
+extern BOOL SataCdRomSscInitialized;
+extern BOOL SataCdRomSscDisabled;
 extern uint32_t SataCdRomSscTotalReadErrors;
 extern uint64_t SataCdRomAuthenticationDisabled;
 
