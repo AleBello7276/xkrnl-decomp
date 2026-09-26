@@ -1,5 +1,6 @@
 #include "channel.h"
 
+#include "io_d/io.h"
 #include "ke_d/ke.h"
 #include "sata.h"
 #include <intrinsics.h>
@@ -40,7 +41,34 @@ BOOL SataChannelSpinWhileBusyAndNotDrq(DWORD Address) {
     return FALSE;
 }
 
-void KeRetireDpcList();
+// NON_MATCHING: close but cr6 thing, functional match tho i think
+void SataChannelCancelPacket(SATA_CHANNEL* Channel, SATA_REQUEST* Request) {
+    LIST_ENTRY* Next;
+    LIST_ENTRY* Prev;
+
+    assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
+
+    IoReleaseCancelSpinLock();
+    KeAcquireSpinLockAtRaisedIrql(&Channel->unk0x108);
+
+    Next = Request->List.Flink;
+    if (Next != NULL) {
+        Prev = Request->List.Blink;
+
+        Prev->Flink = Next;
+        Next->Blink = Prev;
+
+        if (Prev == Next) {
+            Channel->ActiveSomethingMask &= ~(1 << (BYTE)(Request->Index + 2));
+        }
+    }
+
+    KeReleaseSpinLockFromRaisedIrql(&Channel->unk0x108);
+
+    Request->LastStatus = STATUS_CANCELLED;
+    Request->TransferLength = 0;
+    IoCompleteRequest(Request, 0);
+}
 
 void SataChannelDriverNotification(PSATA_NOTIFICATION Notification, ULONG ID) {
     SATA_CHANNEL* Channel = CONTAINING_RECORD(Notification, SATA_CHANNEL, mNotification);

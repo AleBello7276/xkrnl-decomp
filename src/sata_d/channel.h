@@ -3,6 +3,9 @@
 #include <krnl.h>
 #include <types.h>
 
+// TODO: sort this:
+void KeRetireDpcList();
+
 typedef struct _SATA_REQUEST SATA_REQUEST;
 
 typedef struct _SATA_EXTENSION {
@@ -45,13 +48,17 @@ typedef struct _SataChannel {
     uint8_t unk_0xAB;
     SATA_REQUEST* mRequest;
     SATA_NOTIFICATION mNotification;
-} SATA_CHANNEL;
+    char unk210;
+    BYTE ActiveSomethingMask;
+    char pad222[0x32];
+    KSPIN_LOCK unk0x108;  // likely KSPIN_LOCK
+} SATA_CHANNEL, *PSATA_CHANNEL;
 
 /* */
-void SataChannelStartNextPacket(void*);
+void SataChannelStartNextPacket(PSATA_CHANNEL pChannel);
 
 /* */
-void SataChannelCancelPacket(SATA_CHANNEL* Channel);
+void SataChannelCancelPacket(SATA_CHANNEL* Channel, SATA_REQUEST* Request);
 
 /* */
 BOOL SataChannelSpinWhileBusy(DWORD Address);

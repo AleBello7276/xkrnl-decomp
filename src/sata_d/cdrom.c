@@ -3,9 +3,11 @@
 #include "ema.h"
 #include "fatalError.h"
 #include "init/kdataseg.h"
+#include "io_d/io.h"
 #include "ke_d/ke.h"
 #include "krnl.h"
 #include "types.h"
+
 
 extern void* SataCdRomDriverObject;
 
@@ -143,10 +145,10 @@ NTSTATUS SataCdromGetLastSenseData(uint8_t* buffer, uint32_t size) {
     if (buffer == nullptr)
         return STATUS_INVALID_PARAMETER;
 
-    if (size < SENSE_DATA_SIZE)
+    if (size < BUFF_SIZE)
         return STATUS_BUFFER_TOO_SMALL;
 
-    memcpy(buffer, &SataCdRomSenseData, SENSE_DATA_SIZE);
+    memcpy(buffer, &SataCdRomSenseData, BUFF_SIZE);
     return STATUS_SUCCESS;
 }
 
@@ -410,8 +412,8 @@ void SataCdRomFinishStandby(void* param_1, SATA_REQUEST* Request, NTSTATUS Statu
     SataChannelStartNextPacket(param_1);
 }
 
-void SataCdRomCancelPacket() {
-    SataChannelCancelPacket(&SataCdRomChannelExtension);
+void SataCdRomCancelPacket(PSATA_CHANNEL Channel, SATA_REQUEST* pRequest) {
+    return SataChannelCancelPacket(&SataCdRomChannelExtension, pRequest);
 }
 
 void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t Command) {
@@ -484,26 +486,23 @@ void SataCdRomRestartCurrentPacket(PVOID);
 void SataCdRomWaitAndRestartCurrentPacket(SATA_CHANNEL* pChannel, ULONG Idk) {
     const size_t PERIOD = 100;
     ULONG Delay = Idk;
-    SATA_CHANNEL* Channel;
 
     SataChannelSetTimerPeriod(pChannel, PERIOD);
 
-    Channel = pChannel;
-
     assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
 
-    KfRaiseIrql(Channel->mIrql);
+    KfRaiseIrql(pChannel->mIrql);
 
-    KeAcquireSpinLockAtRaisedIrql(&Channel->mSpinLock);
+    KeAcquireSpinLockAtRaisedIrql(&pChannel->mSpinLock);
 
-    Channel->retryCount = Delay / PERIOD;
-    Channel->mRoutine = SataCdRomRestartCurrentPacket;
-    Channel->kPcrField = &GetKPCR->unk_0x100;
+    pChannel->retryCount = Delay / PERIOD;
+    pChannel->mRoutine = SataCdRomRestartCurrentPacket;
+    pChannel->kPcrField = &GetKPCR->unk_0x100;
 
-    assert(GetKPCR->m_currentIrql == Channel->mIrql);
-    assert(&GetKPCR->unk_0x100 == Channel->kPcrField);
+    assert(GetKPCR->m_currentIrql == pChannel->mIrql);
+    assert(&GetKPCR->unk_0x100 == pChannel->kPcrField);
 
-    KeReleaseSpinLockFromRaisedIrql(&Channel->mSpinLock);
+    KeReleaseSpinLockFromRaisedIrql(&pChannel->mSpinLock);
 
     KfLowerIrql(DISPATCH_LEVEL);
 }

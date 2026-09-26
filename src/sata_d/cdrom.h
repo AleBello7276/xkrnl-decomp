@@ -21,10 +21,7 @@
 extern void SataDiskTransferInterrupt(void);
 uint32_t KeInsertQueueDpc(KDPC* Dpc, PVOID arg1, PVOID arg2);
 KIRQL KfRaiseIrql(KIRQL Irql);
-void KeAcquireSpinLockAtRaisedIrql(PKSPIN_LOCK pSpinLock);
-void KeReleaseSpinLockFromRaisedIrql(PKSPIN_LOCK pSpinLock);
 void KfLowerIrql(KIRQL pIrql);
-void IoCompleteRequest(SATA_REQUEST* pRequest, int32_t priority);
 int32_t IoSynchronousDeviceIoControlRequest(DWORD Ioctl, void* deviceExt, void* inBuf, int32_t inLen,
                                             void* outBuf, int32_t outLen, int32_t* retLen);
 bool HalIsExecutingPowerDownDpc(void);
@@ -148,7 +145,7 @@ void SataCdRomSscSetCurrentSpeed(int, void*);
 void SataCdRomFinishStandby(void* param_1, SATA_REQUEST* Request, NTSTATUS Status);
 
 /* */
-void SataCdRomCancelPacket();
+void SataCdRomCancelPacket(PSATA_CHANNEL Channel, SATA_REQUEST* pRequest);
 
 /* */
 void SataCdRomIssueImmediateCommand(SATA_CHANNEL* Channel, uint8_t command);
