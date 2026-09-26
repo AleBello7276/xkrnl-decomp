@@ -40,19 +40,23 @@ BOOL SataChannelSpinWhileBusyAndNotDrq(DWORD Address) {
     return FALSE;
 }
 
-void SataChannelDriverNotification(PVOID A, ULONG Idk) {
+void KeRetireDpcList();
+
+void SataChannelDriverNotification(PSATA_NOTIFICATION Notification, ULONG ID) {
+    SATA_CHANNEL* Channel = CONTAINING_RECORD(Notification, SATA_CHANNEL, mNotification);
+
     assert(GetKPCR->m_currentIrql == DISPATCH_LEVEL);
     assert(GetKPCR->m_ProcessorNum == 0);
 
-    switch (Idk) {
+    switch (ID) {
     case 0:
         break;
 
     case 1:
-        //    if (*(BYTE*)(A + 0x20)) {
-        //        *(BYTE*)(A + 0x20) = 0;
-        //        SataChannelStartNextPacket((DWORD*)(A - 0xb0));
-        //    }
+        if (Channel->mNotification.unk0x20) {
+            Channel->mNotification.unk0x20 = FALSE;
+            SataChannelStartNextPacket(Channel);
+        }
         return;
 
     case 2:
@@ -61,4 +65,16 @@ void SataChannelDriverNotification(PVOID A, ULONG Idk) {
     default:
         return;
     }
+
+    if (Channel->mNotification.unk0x20 == FALSE) {
+        Channel->mNotification.unk0x21 = Channel->mNotification.unk0x20;
+        __sync();
+
+        SataChannelStartPacket(Channel, Channel->mRequest);
+
+        Channel->mNotification.unk0x20 = TRUE;
+    }
+
+    while (Channel->mNotification.unk0x21 == FALSE)
+        KeRetireDpcList();
 }

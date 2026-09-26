@@ -200,24 +200,23 @@ void SataCdRomSMCNotification(void* arg1, SATA_SMC_NOTIFICATION* arg2) {
     }
 }
 
-void SataCdRomStartIo(void* deviceObject, void* irp) {
-    SATA_CHANNEL* ext = &SataCdRomChannelExtension;
-    void* curIrp = ext->currentIrp;
+void SataCdRomStartIo(void* deviceObject, SATA_REQUEST* Request) {
+    SATA_CHANNEL* Channel = &SataCdRomChannelExtension;
 
-    if (irp == curIrp) {
+    if (Request == Channel->mRequest) {
         __sync();
-        ext->unk_0xD1 = 1;
+        Channel->mNotification.unk0x21 = TRUE;
         return;
     }
 
-    if (!HalIsExecutingPowerDownDpc() && !(XboxHardwareInfo.Flags & 0x4000)) {
-        ext->unk_0xAA = 0;
-        ext->unk_0xAB = 4;
-        SataCdRomDispatchIo(ext, irp);
+    if (!HalIsExecutingPowerDownDpc() && !(XboxHardwareInfo.Flags & HARDWAREINFO_FLAGS_0x4000)) {
+        Channel->unk_0xAA = 0;
+        Channel->unk_0xAB = 4;
+        SataCdRomDispatchIo(Channel, Request);
         return;
     }
 
-    SataChannelAbortCurrentPacket(ext);
+    SataChannelAbortCurrentPacket(Channel);
 }
 
 NTSTATUS SataCdRomRestrictedDeviceControl(RDC_DEVICE_OBJECT* Device, SATA_REQUEST* Request) {
@@ -554,9 +553,9 @@ void SataCdRomStandbySynchronized(PVOID param_1) {
     KIRQL Irql;
 
     Irql = KeRaiseIrqlToDpcLevel();
-    SataChannelDriverNotification(&SataCdRomChannelExtension.unk, 0);
+    SataChannelDriverNotification(&SataCdRomChannelExtension.mNotification, 0);
     SataCdRomIssueImmediateCommand(&SataCdRomChannelExtension, 0xe0);
     SataCdRomClearAuthenticationStateInternal(param_1);
-    SataChannelDriverNotification(&SataCdRomChannelExtension.unk, 1);
+    SataChannelDriverNotification(&SataCdRomChannelExtension.mNotification, 1);
     KfLowerIrql(Irql);
 }

@@ -11,6 +11,13 @@ typedef struct _SATA_EXTENSION {
     ULONG Flags;
 } SATA_EXTENSION;
 
+typedef struct _SATA_NOTIFICATION {
+    char pad[32];
+    BOOLEAN unk0x20;
+    BOOLEAN unk0x21;
+} SATA_NOTIFICATION, *PSATA_NOTIFICATION;
+
+// must be 212 bytes
 typedef struct _SataChannel {
     uint32_t unk0x0;
     uint32_t unk0x4;
@@ -36,10 +43,8 @@ typedef struct _SataChannel {
     uint8_t retryCount;
     uint8_t unk_0xAA;
     uint8_t unk_0xAB;
-    void* currentIrp;
-    PVOID unk;
-    char padD1[0xD1 - 0xB4];
-    uint8_t unk_0xD1;
+    SATA_REQUEST* mRequest;
+    SATA_NOTIFICATION mNotification;
 } SATA_CHANNEL;
 
 /* */
@@ -76,4 +81,4 @@ void SataChannelCopyDoubleBuffer(SATA_CHANNEL* pChannel, void* buffer, int32_t l
 int32_t SataChannelStartPacket(SATA_CHANNEL* pChannel, SATA_REQUEST* pRequest);
 
 /* */
-void SataChannelDriverNotification(PVOID, ULONG);
+void SataChannelDriverNotification(PSATA_NOTIFICATION Notification, ULONG ID);
