@@ -5,7 +5,7 @@ Xbox 360 Kernel Decompilation
 [Code Progress]: https://decomp.dev/AleBello7276/xkrnl-decomp.svg?mode=shield&measure=code&label=Code
 [Data Progress]: https://decomp.dev/AleBello7276/xkrnl-decomp.svg?mode=shield&measure=data&label=Data
 [progress]: https://decomp.dev/AleBello7276/xkrnl-decomp
-[Discord Badge]: https://img.shields.io/discord/1330983764272091257?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[Discord Badge]: https://img.shields.io/discord/1330983764272091257?color=%237289DA&logo=discord&logoColor=%23FFFFFF 
 [discord]: https://discord.gg/sSxH9jFpqD
 
 A work-in-progress decompilation of The Xbox 360 Kernel.
