@@ -29,6 +29,12 @@ Supported versions:
 
 - `21256.18_D (xboxkrnld.exe)`: Kernel version: 17489.0
 
+
+Info
+--------
+Join the [https://discord.gg/sSxH9jFpqD](Discord server)
+
+
 Dependencies
 ============
 
