@@ -1,5 +1,5 @@
 Xbox 360 Kernel Decompilation
-[![Code Progress]][progress]
+[![Code Progress]][progress] [![Discord Badge]][discord]
 =============
 
 <!--
@@ -18,8 +18,8 @@ See https://decomp.dev/api for an API overview.
 <!--
 Replace with your Discord server's ID and invite URL.
 -->
-[Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
-[discord]: https://discord.gg/hKx3FJJgrV
+[Discord Badge]: https://img.shields.io/discord/1330983764272091257?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[discord]: https://discord.gg/sSxH9jFpqD
 
 A work-in-progress decompilation of The Xbox 360 Kernel.
 
