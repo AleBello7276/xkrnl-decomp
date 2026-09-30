@@ -1,25 +1,12 @@
 Xbox 360 Kernel Decompilation
-[![Code Progress]][progress]
+[![Code Progress]][progress] [![Discord Badge]][discord]
 =============
 
-<!--
-Replace with your repository's URL.
-[Build Status]: https://github.com/zeldaret/tww/actions/workflows/build.yml/badge.svg
-[actions]: https://github.com/zeldaret/tww/actions/workflows/build.yml
--->
-
-<!--
-decomp.dev progress badges
-See https://decomp.dev/api for an API overview.
--->
 [Code Progress]: https://decomp.dev/AleBello7276/xkrnl-decomp.svg?mode=shield&measure=code&label=Code
 [Data Progress]: https://decomp.dev/AleBello7276/xkrnl-decomp.svg?mode=shield&measure=data&label=Data
 [progress]: https://decomp.dev/AleBello7276/xkrnl-decomp
-<!--
-Replace with your Discord server's ID and invite URL.
--->
-[Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
-[discord]: https://discord.gg/hKx3FJJgrV
+[Discord Badge]: https://img.shields.io/discord/1330983764272091257?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[discord]: https://discord.gg/sSxH9jFpqD
 
 A work-in-progress decompilation of The Xbox 360 Kernel.
 
@@ -32,6 +19,10 @@ Supported versions:
 The SHA1 hashes for the files are:
 - `a303e3404e8dd0b9e9defd38aa6c37e04eb19101` `xboxkrnld.exe` 
 - `625c54f4f273c66fd7a08e8b2ff7d1167983eeba` `xboxkrnld.pdb`
+
+Info
+--------
+Join the [Discord server](https://discord.gg/sSxH9jFpqD)
 
 Dependencies
 ============
@@ -81,7 +72,7 @@ Building
 - Clone the repository:
 
   ```sh
-  git clone https://github.com/my/repo.git
+  git clone https://github.com/AleBello7276/xkrnl-decomp.git
   ```
 
 - Copy your game's disc image to `orig/21256.18_D`.

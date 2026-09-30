@@ -145,112 +145,111 @@ void MiReorderTree(MMADDRESS_NODE* node, MMADDRESS_NODE** rootVad) {
     return;
 }
 
-MMVAD_TREE* MiGetVadTreeFromBaseAddress(KPROCESS* process, uint32_t baseAddr, uint32_t size) {
-    MMVAD_TREE* tree;
+MMVAD_TREE* MiGetVadTreeFromBaseAddress(PKPROCESS Process, ULONG_PTR Base, DWORD Size) {
+    MMVAD_TREE* Tree;
 
-    if (baseAddr >= process->m_vadTree1.m_rangeStart && baseAddr < process->m_vadTree1.m_rangeEnd) {
-        tree = &process->m_vadTree1;
-    } else if (baseAddr >= process->m_vadTree2.m_rangeStart && baseAddr < process->m_vadTree2.m_rangeEnd) {
-        tree = &process->m_vadTree2;
+    if (Base >= Process->mTreeA.m_rangeStart && Base < Process->mTreeA.m_rangeEnd) {
+        Tree = &Process->mTreeA;
+    } else if (Base >= Process->mTreeB.m_rangeStart && Base < Process->mTreeB.m_rangeEnd) {
+        Tree = &Process->mTreeB;
     } else {
-        goto fail;
+        return NULL;
     }
-    if (size > tree->m_rangeEnd - baseAddr)
-        goto fail;
-    return tree;
-fail:
-    return 0;
+
+    if (Size > Tree->m_rangeEnd - Base)
+        return NULL;
+
+    return Tree;
 }
 
-void MiInsertVad(MMVAD* node, MMVAD_TREE* tree) {
+void MiInsertVad(MMVAD* Node, MMVAD_TREE* Tree) {
     MMVAD* prev;
     MMVAD* current;
     int counter;
 
-    assert(node->m_endVpn >= node->m_startVpn);
+    assert(Node->m_endVpn >= Node->m_startVpn);
 
-    prev = tree->m_reserved;
-    tree->m_hint = node;
+    prev = Tree->m_reserved;
+    Tree->m_hint = Node;
     if (prev != 0) {
-        if ((uint32_t)prev->m_endVpn + 0x10 >= (uint32_t)node->m_startVpn) {
-            tree->m_reserved = node;
+        if ((uint32_t)prev->m_endVpn + 0x10 >= (uint32_t)Node->m_startVpn) {
+            Tree->m_reserved = Node;
         }
     }
 
     counter = 0;
-    current = tree->m_root;
-    node->m_leftLeaf = 0;
-    node->m_rightLeaf = 0;
+    current = Tree->m_root;
+    Node->m_leftLeaf = 0;
+    Node->m_rightLeaf = 0;
 
     if (current == 0) {
-        tree->m_root = node;
-        node->m_parent = 0;
+        Tree->m_root = Node;
+        Node->m_parent = 0;
         return;
     }
 
     for (;;) {
         counter++;
         if (counter == 15)
-            MiReorderTree((MMADDRESS_NODE*)current, (MMADDRESS_NODE**)&tree->m_root);
-        if (node->m_startVpn < current->m_startVpn) {
+            MiReorderTree((MMADDRESS_NODE*)current, (MMADDRESS_NODE**)&Tree->m_root);
+        if (Node->m_startVpn < current->m_startVpn) {
             if (current->m_leftLeaf == 0) {
-                current->m_leftLeaf = node;
+                current->m_leftLeaf = Node;
                 break;
             }
             current = current->m_leftLeaf;
         } else {
             if (current->m_rightLeaf == 0) {
-                current->m_rightLeaf = node;
+                current->m_rightLeaf = Node;
                 break;
             }
             current = current->m_rightLeaf;
         }
     }
-    node->m_parent = current;
+    Node->m_parent = current;
 }
 
 MMVAD* MiGetNextVad(MMVAD* vad) {
-    MMVAD* node = vad->m_rightLeaf;
-    if (node) {
-        do {
-            vad = node;
-            node = vad->m_leftLeaf;
-        } while (node);
-        return vad;
+    MMVAD* Node = vad->m_rightLeaf;
+
+    while (Node) {
+        vad = Node;
+        Node = vad->m_leftLeaf;
+        if (Node == NULL)
+            return NULL;
     }
 
-    node = vad->m_parent;
-    if (!node)
-        goto fail;
-    do {
-        if (node->m_leftLeaf == vad)
+    Node = vad->m_parent;
+
+    while (Node) {
+        if (Node->m_leftLeaf == vad)
             return vad->m_parent;
-        vad = node;
-        node = vad->m_parent;
-    } while (node);
-fail:
-    return 0;
+        vad = Node;
+        Node = vad->m_parent;
+    }
+
+    return NULL;
 }
 
 MMVAD* MiGetPreviousVad(MMVAD* vad) {
-    MMVAD* node = vad->m_leftLeaf;
-    if (node) {
+    MMVAD* Node = vad->m_leftLeaf;
+    if (Node) {
         do {
-            vad = node;
-            node = vad->m_rightLeaf;
-        } while (node);
+            vad = Node;
+            Node = vad->m_rightLeaf;
+        } while (Node);
         return vad;
     }
 
-    node = vad->m_parent;
-    if (!node)
+    Node = vad->m_parent;
+    if (!Node)
         goto fail;
     do {
-        if (node->m_rightLeaf == vad)
+        if (Node->m_rightLeaf == vad)
             return vad->m_parent;
-        vad = node;
-        node = vad->m_parent;
-    } while (node);
+        vad = Node;
+        Node = vad->m_parent;
+    } while (Node);
 fail:
     return 0;
 }

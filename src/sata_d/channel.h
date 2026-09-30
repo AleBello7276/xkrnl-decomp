@@ -3,6 +3,9 @@
 #include <krnl.h>
 #include <types.h>
 
+// TODO: sort this:
+void KeRetireDpcList();
+
 typedef struct _SATA_REQUEST SATA_REQUEST;
 
 typedef struct _SATA_EXTENSION {
@@ -11,6 +14,13 @@ typedef struct _SATA_EXTENSION {
     ULONG Flags;
 } SATA_EXTENSION;
 
+typedef struct _SATA_NOTIFICATION {
+    char pad[32];
+    BOOLEAN unk0x20;
+    BOOLEAN unk0x21;
+} SATA_NOTIFICATION, *PSATA_NOTIFICATION;
+
+// must be 212 bytes
 typedef struct _SataChannel {
     uint32_t unk0x0;
     uint32_t unk0x4;
@@ -36,16 +46,19 @@ typedef struct _SataChannel {
     uint8_t retryCount;
     uint8_t unk_0xAA;
     uint8_t unk_0xAB;
-    void* currentIrp;
-    char padD1[0xD1 - 0xB0];
-    uint8_t unk_0xD1;
-} SATA_CHANNEL;
+    SATA_REQUEST* mRequest;
+    SATA_NOTIFICATION mNotification;
+    char unk210;
+    BYTE ActiveSomethingMask;
+    char pad222[0x32];
+    KSPIN_LOCK unk0x108;  // likely KSPIN_LOCK
+} SATA_CHANNEL, *PSATA_CHANNEL;
 
 /* */
-void SataChannelStartNextPacket(void*);
+void SataChannelStartNextPacket(PSATA_CHANNEL pChannel);
 
 /* */
-void SataChannelCancelPacket(SATA_CHANNEL* Channel);
+void SataChannelCancelPacket(SATA_CHANNEL* Channel, SATA_REQUEST* Request);
 
 /* */
 BOOL SataChannelSpinWhileBusy(DWORD Address);
@@ -73,3 +86,6 @@ void SataChannelCopyDoubleBuffer(SATA_CHANNEL* pChannel, void* buffer, int32_t l
 
 /* */
 int32_t SataChannelStartPacket(SATA_CHANNEL* pChannel, SATA_REQUEST* pRequest);
+
+/* */
+void SataChannelDriverNotification(PSATA_NOTIFICATION Notification, ULONG ID);

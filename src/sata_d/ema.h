@@ -25,6 +25,8 @@ typedef struct _SATA_EMA_BLOCK {
     UCHAR Reserved_0x14[0x10];  // +0x14
 } SATA_EMA_BLOCK;               // sizeof == 0x24
 
+/* */
 NTSTATUS EmaExecuteSingle(PVOID Param1);
 
+/* */
 NTSTATUS EmaExecute(PVOID Param1);
