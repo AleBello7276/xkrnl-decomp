@@ -69,7 +69,7 @@ Building
 - Clone the repository:
 
   ```sh
-  git clone https://github.com/my/repo.git
+  git clone https://github.com/AleBello7276/xkrnl-decomp.git
   ```
 
 - Copy your game's disc image to `orig/21256.18_D`.
