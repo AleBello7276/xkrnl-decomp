@@ -32,8 +32,7 @@ Supported versions:
 
 Info
 --------
-Join the [https://discord.gg/sSxH9jFpqD](Discord server)
-
+Join the [Discord server](https://discord.gg/sSxH9jFpqD)
 
 Dependencies
 ============
